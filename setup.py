@@ -14,7 +14,7 @@ setup(
     long_description=long_description,
     url='https://github.com/agrinessedge/edge-playground',
     packages=find_packages(),
-    setup_requires=['requests>=2.19.1', 'pytz>=2018.5', 'python-dateutil>=2.7.3', 'plotly>=3.1.1', 'pandas>=0.23.4', 'arrow>=0.12.1'],
+    install_requires=['requests>=2.19.1', 'pytz>=2018.5', 'python-dateutil>=2.7.3', 'plotly>=3.1.1', 'pandas>=0.23.4', 'arrow>=0.12.1'],
     #scripts=['portia'],
     classifiers=(
         'Programming Language :: Python :: 3',
