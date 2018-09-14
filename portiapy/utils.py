@@ -87,42 +87,50 @@ import plotly.graph_objs as plotlygo                            # Modern visuali
 import plotly.offline as plotly
 import pytz                                                     # World timezone definitions for Python
 
-def plotSummaryfromDataFrame(dataFrame, timezone='Etc/GMT-3'):     
+def plotSelectionsFromDataframes(dataFrames, timezone='Etc/GMT-3'):
 
-    plotly.offline.init_notebook_mode(connected=False)
+    lines = []
 
-    tz = pytz.timezone(timezone)
-    lines =[]
-    timeAxis = []
+    for i, dataFrame in enumerate(dataFrames):
+        dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(timezone)
+        lines.append( plotlygo.Scatter( y=dataFrame.dimension_value, x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Sensor {0}".format(i) ) )
 
-    dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize('Etc/GMT-3')
-    
-    for i, line in enumerate( dataFrame['header_timestamp'] ):
-        timeAxis.append( dataFrame['header_timestamp'][i] )
+    data   = plotlygo.Data(lines)
+    layout = plotlygo.Layout(width=1100, height=650)
+    plotly.iplot( plotlygo.Figure(data=data, layout=layout) )
 
-    lines.append(plotlygo.Bar( y=dataFrame['number_of_packages'], x=timeAxis, name="Packages", opacity=0.1 ))
+def plotSummariesFromDataframes(dataFrames, timezone='Etc/GMT-3'):
+   
+    lines = []
 
-    if 'min' in dataFrame.columns:
-        lines.append( plotlygo.Scatter( y=dataFrame['min'],    x=timeAxis, mode='lines+markers', name="Min",    yaxis='y2' ) )
-    if 'max' in dataFrame.columns:
-        lines.append( plotlygo.Scatter( y=dataFrame['max'],    x=timeAxis, mode='lines+markers', name="Max",    yaxis='y2' ) )
-    if 'sum' in dataFrame.columns:
-        lines.append( plotlygo.Scatter( y=dataFrame['sum'],    x=timeAxis, mode='lines+markers', name="Sum",    yaxis='y2', visible='legendonly' ) )
-    if 'avg' in dataFrame.columns:
-        lines.append( plotlygo.Scatter( y=dataFrame['avg'],    x=timeAxis, mode='lines+markers', name="Avg",    yaxis='y2' ) )
-    
-    if 'median' in dataFrame.columns:
-        lines.append( plotlygo.Scatter( y=dataFrame['median'], x=timeAxis, mode='lines+markers', name="Median", yaxis='y2' ) )
-    if 'mode' in dataFrame.columns:
-        lines.append( plotlygo.Scatter( y=dataFrame['mode'],   x=timeAxis, mode='lines+markers', name="Mode",   yaxis='y2' ) )
-    if 'stddev' in dataFrame.columns:
-        lines.append( plotlygo.Scatter( y=dataFrame['stddev'], x=timeAxis, mode='lines+markers', name="Stddev", yaxis='y2', visible='legendonly' ) )
-    if 'spread' in dataFrame.columns:
-        lines.append( plotlygo.Scatter( y=dataFrame['spread'], x=timeAxis, mode='lines+markers', name="Spread", yaxis='y2', visible='legendonly' ) )
+    for dataFrame in dataFrames:
+        dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(timezone)
+
+#         timeAxis = []
+#         for i, line in enumerate(dataFrame['header_timestamp']):
+#             timeAxis.append( dataFrame['header_timestamp'][i] )
+
+        lines.append( plotlygo.Bar(y=dataFrame['number_of_packages'], x=dataFrame.header_timestamp, name = "Packages", opacity = 0.1 ) )
+        if 'max' in dataFrame.columns:
+            lines.append( plotlygo.Scatter(y=dataFrame['max'],    x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Max",    yaxis = 'y2' ))
+        if 'avg' in dataFrame.columns:
+            lines.append( plotlygo.Scatter(y=dataFrame['avg'],    x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Avg",    yaxis = 'y2' ))
+        if 'min' in dataFrame.columns:
+            lines.append( plotlygo.Scatter(y=dataFrame['min'],    x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Min",    yaxis = 'y2' ))
+        if 'median' in dataFrame.columns:
+            lines.append( plotlygo.Scatter(y=dataFrame['median'], x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Median", yaxis = 'y2' ))
+        if 'mode' in dataFrame.columns:
+            lines.append( plotlygo.Scatter(y=dataFrame['mode'],   x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Mode",   yaxis = 'y2' ))
+        if 'sum' in dataFrame.columns:
+            lines.append( plotlygo.Scatter(y=dataFrame['sum'],    x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Sum",    yaxis = 'y2', visible= 'legendonly') )
+        if 'stddev' in dataFrame.columns:
+            lines.append( plotlygo.Scatter(y=dataFrame['stddev'], x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Stddev", yaxis = 'y2', visible= 'legendonly') )
+        if 'spread' in dataFrame.columns:
+            lines.append( plotlygo.Scatter(y=dataFrame['spread'], x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Spread", yaxis = 'y2', visible= 'legendonly') )
 
     data = plotlygo.Data(lines)
-    layout = plotlygo.Layout( width=1000, height=650, yaxis=dict(title='Number of Packages', side='right'), yaxis2=dict(title='Dimension Value', overlaying='y',side='left') )
-    plotly.iplot( plotlygo.Figure(data=data, layout=layout) )    
+    layout = plotlygo.Layout(width=1100, height=650, yaxis=dict(title='Number of Packages', side='right'), yaxis2=dict(title='Dimension Value', overlaying='y',side='left'))
+    plotly.iplot( plotlygo.Figure(data=data, layout=layout) )
 
 #####################################
 #            Widget Utils           #
@@ -234,6 +242,8 @@ def translateUnityCode(unityCode):
         return 'Pa'
     elif unityCode == 15:
         return 'Kg'
+    elif unityCode == 16:
+        return 'dias'
     else:
         return ''
 
@@ -267,7 +277,7 @@ def translateThingCode(thingCode):
     elif thingCode == 13:
         return 'VirtualHubSmaai4'
     elif thingCode == 14:
-        return 'MiniFarmBrain_v1'
+        return 'Gateway_v1'
     elif thingCode == 15:
         return 'SondaSmaaiT'
     elif thingCode == 16:
@@ -286,8 +296,18 @@ def translateThingCode(thingCode):
         return 'SondaSmaaiH2O'
     elif thingCode == 23:
         return 'SondaSmaaiCO2'
+    elif thingCode == 24:
+        return 'SondaSmaaiU'
+    elif thingCode == 25:
+        return 'SmaaiSmartScale'
+    elif thingCode == 26:
+        return 'SmaaiSiloWeight'
+    elif thingCode == 27:
+        return 'VirtualGateway_v1'
     elif thingCode == 28:
-        return 'Ambientte'    
+        return 'VirtualHubAmbientte'
+    elif thingCode == 29:
+        return 'HubWireless_v1'
     else:
         return 'Desconhecido'
 
@@ -347,5 +367,7 @@ def translateDimensionCode(dimensionCode):
         return 'Pressão Média'
     elif dimensionCode == 26:
         return 'Modelo'
+    elif dimensionCode == 27:
+        return 'Dia do Lote'
     else:
         return 'Desconhecido'
