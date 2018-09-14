@@ -2,7 +2,9 @@
 
 This is a package for handling Agriness Edge's REST API. 
 
-## Dependencies/Packages
+## Getting Started
+
+### Prerequisites
 
 * [requests ^2.19.1](http://docs.python-requests.org/en/master/)
 * [pytz ^2018.5](http://pytz.sourceforge.net/)
@@ -11,6 +13,10 @@ This is a package for handling Agriness Edge's REST API.
 * [pandas ^0.23.4](https://pandas.pydata.org/)
 * [arrow ^0.12.1](https://arrow.readthedocs.io/en/latest/)
 
-## Installation
+### Installing
 
 ``` pip3 install portiapy ```
+
+## Examples
+
+* [Usage (PT-BR)](./docs/pt-br/portiapy-examples.ipynb)
