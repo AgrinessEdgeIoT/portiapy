@@ -1,4 +1,4 @@
-[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/AgrinessEdgeIoT/portiapy/master?urlpath=lab/tree/docs/) [![PyPI version](https://badge.fury.io/py/portiapy.svg)](https://badge.fury.io/py/portiapy)
+[![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/AgrinessEdgeIoT/portiapy/master?urlpath=lab/tree/docs/pt-br/portiapy-examples.ipynb) [![PyPI version](https://badge.fury.io/py/portiapy.svg)](https://badge.fury.io/py/portiapy)
 
 # PortiaPy
 
@@ -23,4 +23,4 @@ This is a package for handling Agriness Edge's REST API.
 
 There are examples available in [pt-br](./docs/pt-br/portiapy-examples.ipynb) and en-us. 
 
-You can start playing with the *portiapy* package on a Jupyter Lab container by clicking at: [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/AgrinessEdgeIoT/portiapy/master?urlpath=lab/tree/docs/) 
+You can start playing with the *portiapy* package on a Jupyter Lab container by clicking at: [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/AgrinessEdgeIoT/portiapy/master?urlpath=lab/tree/docs/pt-br/portiapy-examples.ipynb) 
