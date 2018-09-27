@@ -21,6 +21,6 @@ This is a package for handling Agriness Edge's REST API.
 
 ## Examples
 
-There are examples available in [pt-br](./docs/pt-br/portiapy-examples.ipynb) and en-us. 
+There are examples available in [pt-br](./docs/examples/pt-br/portiapy-examples.ipynb) and en-us. 
 
 You can start playing with the *portiapy* package on a Jupyter Lab container by clicking at: [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/AgrinessEdgeIoT/portiapy/master?urlpath=lab/tree/docs/pt-br/portiapy-examples.ipynb) 
