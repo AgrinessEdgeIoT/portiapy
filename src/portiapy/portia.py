@@ -3,14 +3,23 @@
 #####################################
 
 # Libraries
+import pandas                     # Data analysis tools for Python
+import types					  # Names for built-in types
+
 import portiapy.describe as describe
 import portiapy.profile as profile
 import portiapy.select as select
 import portiapy.summary as summary
+import portiapy.utils as utils
 
 # Functions
 def about():
     print("portiapy.device - an Agriness Edge project")
+
+def addHumanizeFunction(obj):
+	if isinstance(obj, pandas.DataFrame):
+		obj.humanize = types.MethodType( utils.humanize, obj )
+	return obj
 
 # Classes
 
@@ -54,9 +63,9 @@ class EdgeDevice:
 	########################### Describe ###########################
 	def ports(self, last=False, params=None):
 		if params is None:
-			return describe.devicePorts(self.portiaConfig, self.edgeId, last)
+			return addHumanizeFunction( describe.devicePorts(self.portiaConfig, self.edgeId, last) )
 		else:
-			return describe.devicePorts(self.portiaConfig, self.edgeId, last, params)
+			return addHumanizeFunction( describe.devicePorts(self.portiaConfig, self.edgeId, last, params) )
 
 	########################### Profile ############################
 	def profile(self, strategy=profile.ProfileStrategies.BY_ZERO_PORT, interval=30, params=None):
@@ -95,15 +104,15 @@ class EdgeDevicePort:
 	########################### Describe ###########################
 	def sensors(self, last=False, params=None):
 		if params is None:
-			return describe.devicePortSensors(self.portiaConfig, self.edgeId, self.port, last)
+			return addHumanizeFunction( describe.devicePortSensors(self.portiaConfig, self.edgeId, self.port, last) )
 		else:
-			return describe.devicePortSensors(self.portiaConfig, self.edgeId, self.port, last, params)
+			return addHumanizeFunction( describe.devicePortSensors(self.portiaConfig, self.edgeId, self.port, last, params) )
 
 	def dimensions(self, last=False, params=None):
 		if params is None:
-			return describe.devicePortDimensions(self.portiaConfig, self.edgeId, self.port, last)
+			return addHumanizeFunction( describe.devicePortDimensions(self.portiaConfig, self.edgeId, self.port, last) )
 		else:
-			return describe.devicePortDimensions(self.portiaConfig, self.edgeId, self.port, last, params)
+			return addHumanizeFunction( describe.devicePortDimensions(self.portiaConfig, self.edgeId, self.port, last, params) )
 
 	########################### Profile ############################
 	def profile(self, strategy=profile.ProfileStrategies.BY_ZERO_PORT, interval=30, params=None):
@@ -137,9 +146,9 @@ class EdgeDeviceSensor:
 	########################### Describe ###########################
 	def dimensions(self, last=False, params=None):
 		if params is None:
-			return describe.devicePortSensorDimensions(self.portiaConfig, self.edgeId, self.port, self.sensor, last)
+			return addHumanizeFunction( describe.devicePortSensorDimensions(self.portiaConfig, self.edgeId, self.port, self.sensor, last) )
 		else:
-			return describe.devicePortSensorDimensions(self.portiaConfig, self.edgeId, self.port, self.sensor, last, params)
+			return addHumanizeFunction( describe.devicePortSensorDimensions(self.portiaConfig, self.edgeId, self.port, self.sensor, last, params) )
 
 	########################### Profile ############################
 	def profile(self, strategy=profile.ProfileStrategies.BY_ZERO_PORT, interval=30, params=None):
@@ -151,9 +160,9 @@ class EdgeDeviceSensor:
 	############################ Select ############################
 	def select(self, last=False, params=None):
 		if params is None:
-			return select.queryByPortSensor(self.portiaConfig, self.edgeId, self.port, self.sensor, last)
+			return addHumanizeFunction( select.queryByPortSensor(self.portiaConfig, self.edgeId, self.port, self.sensor, last) )
 		else:
-			return select.queryByPortSensor(self.portiaConfig, self.edgeId, self.port, self.sensor, last, params)
+			return addHumanizeFunction( select.queryByPortSensor(self.portiaConfig, self.edgeId, self.port, self.sensor, last, params) )
 
 	########################### Summary ############################
 	def summary(self, strategy=summary.SummaryStrategies.PER_HOUR, interval=1, params=None):
@@ -181,9 +190,9 @@ class EdgeDeviceDimensionFromPort:
 	############################ Select ############################
 	def select(self, last=False, params=None):
 		if params is None:
-			return select.queryByPortDimension(self.portiaConfig, self.edgeId, self.port, self.dimension, last)
+			return addHumanizeFunction( select.queryByPortDimension(self.portiaConfig, self.edgeId, self.port, self.dimension, last) )
 		else:
-			return select.queryByPortDimension(self.portiaConfig, self.edgeId, self.port, self.dimension, last, params)
+			return addHumanizeFunction( select.queryByPortDimension(self.portiaConfig, self.edgeId, self.port, self.dimension, last, params) )
 
 # class EdgeDeviceDimension
 
@@ -205,9 +214,9 @@ class EdgeDeviceDimensionFromSensor:
 	############################ Select ############################
 	def select(self, last=False, params=None):
 		if params is None:
-			return select.queryByPortSensorDimension(self.portiaConfig, self.edgeId, self.port, self.sensor, self.dimension, last)
+			return addHumanizeFunction( select.queryByPortSensorDimension(self.portiaConfig, self.edgeId, self.port, self.sensor, self.dimension, last) )
 		else:
-			return select.queryByPortSensorDimension(self.portiaConfig, self.edgeId, self.port, self.sensor, self.dimension, last, params)
+			return addHumanizeFunction( select.queryByPortSensorDimension(self.portiaConfig, self.edgeId, self.port, self.sensor, self.dimension, last, params) )
 
 	########################### Summary ############################
 	def summary(self, strategy=summary.SummaryStrategies.PER_HOUR, interval=1, params=None):

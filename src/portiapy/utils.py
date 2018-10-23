@@ -208,6 +208,33 @@ def mapDevicePortSensorDimensionsToDropdownWidget(edgeid, port, sensor):
 #####################################
 #         Portia Labeling           #
 #####################################
+def humanize(df, datetime=False):
+    for index, row in df.iterrows():
+
+        if datetime == True:
+            df['header_timestamp'] = df['header_timestamp'].astype(str)
+            df.at[index, 'header_timestamp'] = arrow.get( int(row['header_timestamp'])/1000, tzinfo=tz.gettz('America/Sao_Paulo') ).humanize()
+
+        if 'dimension_code' in df.columns:
+            df['dimension_code'] = df['dimension_code'].astype(str)
+            df.at[index, 'dimension_code'] = translateDimensionCode(row['dimension_code'])
+        if 'dimension_unity_code' in df.columns:
+            df['dimension_unity_code'] = df['dimension_unity_code'].astype(str)
+            df.at[index, 'dimension_unity_code'] = translateUnityCode(row['dimension_unity_code'])
+        if 'dimension_thing_code' in df.columns:
+            df['dimension_thing_code'] = df['dimension_thing_code'].astype(str)
+            df.at[index, 'dimension_thing_code'] = translateThingCode(row['dimension_thing_code'])
+
+    if datetime == True:
+        df.rename(columns={'header_timestamp': 'header_datetime'}, inplace=True)
+    if 'dimension_code' in df.columns:
+        df.rename(columns={'dimension_code': 'dimension'}, inplace=True)
+    if 'dimension_unity_code' in df.columns:
+        df.rename(columns={'dimension_unity_code': 'dimension_unity'}, inplace=True)
+    if 'dimension_thing_code' in df.columns:
+        df.rename(columns={'dimension_thing_code': 'dimension_thing'}, inplace=True)
+
+    return df
 
 def translateUnityCode(unityCode):
     if unityCode == 0:
