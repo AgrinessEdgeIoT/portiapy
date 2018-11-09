@@ -8,8 +8,7 @@ with open('../README.md', 'r') as fh:
 setup(
     name='portiapy',
     version=__version__,
-    author='Matheus Mota <matheus@agrinessedge.com>, Lucas Góes <lucas@agrinessedge.com>',
-    author_email='matheus@agrinessedge.com',
+    author='Matheus Mota, Lucas Góes',
     description='A small package for handling Agriness Edge\'s REST API',
     long_description=long_description,
     url='https://github.com/AgrinessEdgeIoT/portiapy',
