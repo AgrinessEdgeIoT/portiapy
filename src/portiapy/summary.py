@@ -16,9 +16,13 @@ class SummaryStrategies(Enum):
     PER_MONTH  = 4
     PER_YEAR   = 5
 
-# Functions
-def about():
-    print("portiapy.summary - an Agriness Edge project")
+class FillStrategies(Enum):
+    NULL     = 1
+    NONE     = 2
+    PREVIOUS = 3
+    LINEAR   = 4
+    NUMBER   = 5
+
 
 def resolveStrategy(strategy):
     if strategy == SummaryStrategies.PER_MINUTE:
@@ -32,12 +36,31 @@ def resolveStrategy(strategy):
     else:
         return 'peryear'
 
+def resolveFill(fill):
+    if fill == FillStrategies.NULL:
+        return 'null'
+    elif fill == FillStrategies.NONE:
+        return 'none'
+    elif fill == FillStrategies.PREVIOUS:
+        return 'previous'
+    elif fill == FillStrategies.LINEAR:
+        return 'linear'
+    elif isinstance(fill, (int, float)):
+        return "{}".format(fill)
+    else:
+        return "none"
+ 
+
+# Functions
+def about():
+    print("portiapy.summary - an Agriness Edge project")
+
 ########################################
 # devicePortSensorDimensions
 ########################################
 # /summary/device/:device/port/:port/sensor/:sensor/:strategy/:interval
 ########################################
-def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': False, 'mode': False, 'stddev': False, 'spread': False }):
+def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'fill':'none', 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': False, 'mode': False, 'stddev': False, 'spread': False }):
     """Returns a pandas data frame with the portia select resultset"""
 
     header = {'Accept': 'text/csv'}
@@ -63,7 +86,7 @@ def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrate
 ########################################
 # /summary/device/:device/port/:port/sensor/:sensor/dimension/:dimension/:strategy/:interval
 ########################################
-def queryByPortSensorDimension(portiaConfig, edgeId, port, sensor, dimensionCode, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': False, 'mode': False, 'stddev': False, 'spread': False }):
+def queryByPortSensorDimension(portiaConfig, edgeId, port, sensor, dimensionCode, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'fill':'none', 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': False, 'mode': False, 'stddev': False, 'spread': False }):
     """Returns a pandas data frame with the portia select resultset"""
 
     header = {'Accept': 'text/csv'}
