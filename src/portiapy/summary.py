@@ -36,19 +36,20 @@ def resolveStrategy(strategy):
     else:
         return 'peryear'
 
-def resolveFill(strategy):
-    if strategy == FillStrategies.NULL:
+def resolveFill(fill):
+    if fill == FillStrategies.NULL:
         return 'null'
-    elif strategy == FillStrategies.NONE:
+    elif fill == FillStrategies.NONE:
         return 'none'
-    elif strategy == FillStrategies.PREVIOUS:
+    elif fill == FillStrategies.PREVIOUS:
         return 'previous'
-    elif strategy == FillStrategies.LINEAR:
+    elif fill == FillStrategies.LINEAR:
         return 'linear'
-    elif strategy == FillStrategies.NUMBER:
-        return 'number'
+    elif isinstance(fill, (int, float)):
+        return "{}".format(fill)
     else:
-        return 'none'        
+        return "none"
+ 
 
 # Functions
 def about():
