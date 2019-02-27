@@ -25,4 +25,4 @@ This is a package for handling Agriness Edge's REST API.
 
 There are examples available in [pt-br](./docs/examples/pt-br/portiapy-examples.ipynb) and en-us. 
 
-You can start playing with the *portiapy* package on a Jupyter or Jupyter Lab container by clicking at the Binder badges on top of this readme.
+You can start playing with the *portiapy* package on a Jupyter or Jupyter Lab container by clicking at the Binder badges on the beginning of this readme.
