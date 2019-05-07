@@ -37,7 +37,7 @@ def resolveStrategy(strategy):
 ########################################
 # /summary/device/:device/port/:port/sensor/:sensor/:strategy/:interval
 ########################################
-def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': False, 'mode': False, 'stddev': False, 'spread': False }):
+def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'offset': 0, 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': True, 'mode': False, 'stddev': False, 'spread': False }):
     """Returns a pandas data frame with the portia select resultset"""
 
     header = {'Accept': 'text/csv'}
@@ -53,8 +53,8 @@ def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrate
 
             return dimensionSeries
 
-        except:
-            raise Exception('couldn\'t create pandas data frame')
+        except Exception as err:
+            raise Exception( 'couldn\'t create pandas data frame: {}'.format(err) )
     else:
         raise Exception('couldn\'t retrieve data')
 
@@ -63,7 +63,7 @@ def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrate
 ########################################
 # /summary/device/:device/port/:port/sensor/:sensor/dimension/:dimension/:strategy/:interval
 ########################################
-def queryByPortSensorDimension(portiaConfig, edgeId, port, sensor, dimensionCode, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': False, 'mode': False, 'stddev': False, 'spread': False }):
+def queryByPortSensorDimension(portiaConfig, edgeId, port, sensor, dimensionCode, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'offset': 0, 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': True, 'mode': False, 'stddev': False, 'spread': False }):
     """Returns a pandas data frame with the portia select resultset"""
 
     header = {'Accept': 'text/csv'}
@@ -79,7 +79,7 @@ def queryByPortSensorDimension(portiaConfig, edgeId, port, sensor, dimensionCode
 
             return dimensionSeries
 
-        except:
-            raise Exception('couldn\'t create pandas data frame')
+        except Exception as err:
+            raise Exception( 'couldn\'t create pandas data frame: {}'.format(err) )
     else:
         raise Exception('couldn\'t retrieve data')

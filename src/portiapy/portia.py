@@ -1,15 +1,20 @@
 #####################################    
-#              Device               #
+#              Portia               #
 #####################################
 
 # Libraries
 import pandas                     # Data analysis tools for Python
 import types					  # Names for built-in types
 
+import portiapy.phases as phases
+import portiapy.axioms as axioms
+import portiapy.specs as specs
+
 import portiapy.describe as describe
 import portiapy.profile as profile
 import portiapy.select as select
 import portiapy.summary as summary
+
 import portiapy.utils as utils
 
 # Functions
@@ -35,12 +40,133 @@ class PortiaApi:
 		self.portiaConfig = portiaConfig
 
 	########################################
+	# pipeline
+	# - Instantiates a new EdgePipeline
+	def pipeline(self):
+		return EdgePipeline(self.portiaConfig)
+
+	########################################
 	# device
 	# - Instantiates a new EdgeDevice
 	def device(self, edgeId):
 		return EdgeDevice(edgeId, self.portiaConfig)
 
 # class PortiaApi
+
+########################################
+# EdgePipeline
+# /pipeline...
+class EdgePipeline:
+
+	########################################
+	# __init__
+	# - Constructor for EdgePipeline
+	def __init__(self, portiaConfig):
+		self.portiaConfig = portiaConfig
+
+	########################################
+	# phase
+	# - Instantiates a new EdgePipelinePhase
+	def phase(self):
+		return EdgePipelinePhase(self.portiaConfig)
+
+	########################################
+	# axiom
+	# - Instantiates a new EdgePipelineAxiom
+	def axiom(self):
+		return EdgePipelineAxiom(self.portiaConfig)
+
+	########################################
+	# specification
+	# - Instantiates a new EdgePipelineSpecification
+	def specification(self):
+		return EdgePipelineSpecification(self.portiaConfig)
+
+# class EdgePipeline
+
+########################################
+# EdgePipelinePhase
+# /pipeline/phases/...
+class EdgePipelinePhase:
+
+	########################################
+	# __init__
+	# - Constructor for EdgePipelinePhase
+	def __init__(self, portiaConfig):
+		self.portiaConfig = portiaConfig
+
+	############################# CRUD #############################
+	def list(self):
+		return phases.index(self.portiaConfig)
+
+	def create(self, payload):
+		return phases.store(self.portiaConfig, payload)
+
+	def display(self, phaseName):
+		return phases.show(self.portiaConfig, phaseName)
+
+	def update(self, phaseName, payload):
+		return phases.update(self.portiaConfig, phaseName, payload)
+
+# class EdgePipelinePhase
+
+########################################
+# EdgePipelineAxiom
+# /pipeline/axioms/...
+class EdgePipelineAxiom:
+
+	########################################
+	# __init__
+	# - Constructor for EdgePipelineAxiom
+	def __init__(self, portiaConfig):
+		self.portiaConfig = portiaConfig
+
+	############################# CRUD #############################
+	def list(self):
+		return axioms.index(self.portiaConfig)
+
+	def create(self, payload):
+		return axioms.store(self.portiaConfig, payload)
+
+	def display(self, axiomName):
+		return axioms.show(self.portiaConfig, axiomName)
+
+	def update(self, axiomName, payload):
+		return axioms.update(self.portiaConfig, axiomName, payload)
+
+	def delete(self, axiomName):
+		return axioms.destroy(self.portiaConfig, axiomName)
+
+# class EdgePipelineAxiom
+
+########################################
+# EdgePipelineSpecification
+# /pipeline/axioms/...
+class EdgePipelineSpecification:
+
+	########################################
+	# __init__
+	# - Constructor for EdgePipelineSpecification
+	def __init__(self, portiaConfig):
+		self.portiaConfig = portiaConfig
+
+	############################# CRUD #############################
+	def list(self):
+		return specs.index(self.portiaConfig)
+
+	def create(self, payload):
+		return specs.store(self.portiaConfig, payload)
+
+	def display(self, specName):
+		return specs.show(self.portiaConfig, specName)
+
+	def update(self, specName, payload):
+		return specs.update(self.portiaConfig, specName, payload)
+
+	def delete(self, specName):
+		return specs.destroy(self.portiaConfig, specName)
+
+# class EdgePipelineSpecification
 
 ########################################
 # EdgeDevice
@@ -194,7 +320,7 @@ class EdgeDeviceDimensionFromPort:
 		else:
 			return addHumanizeFunction( select.queryByPortDimension(self.portiaConfig, self.edgeId, self.port, self.dimension, last, params) )
 
-# class EdgeDeviceDimension
+# class EdgeDeviceDimensionFromPort
 
 ########################################
 # EdgeDeviceDimensionFromSensor
@@ -225,4 +351,4 @@ class EdgeDeviceDimensionFromSensor:
 		else:
 			return summary.queryByPortSensorDimension(self.portiaConfig, self.edgeId, self.port, self.sensor, self.dimension, strategy, interval, params)
 
-# class EdgeDeviceDimension2
+# class EdgeDeviceDimensionFromSensor
