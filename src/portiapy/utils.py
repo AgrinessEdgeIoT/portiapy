@@ -54,6 +54,42 @@ def httpPostRequest(portiaConfig, endpoint, payload, headers=None):
 
     return response
 
+def httpPutRequest(portiaConfig, endpoint, payload, headers=None):
+
+    h = { 'Authorization': 'Bearer {0}'.format(portiaConfig['authorization']) }
+    if headers is not None:
+        h = { **h, **headers }  # Takes the arguments and turn them into a dictionary
+
+    url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
+
+    start = time.time()
+    response = requests.put(url, headers=h, json=payload)
+    end = time.time()
+    elapsed = end - start
+
+    if portiaConfig['debug'] == True:
+        print('[portia-debug]: status: {0} | {1:.4f} sec. | {2}'.format(response.status_code, elapsed, url))
+
+    return response
+
+def httpDeleteRequest(portiaConfig, endpoint, headers=None):
+
+    h = { 'Authorization': 'Bearer {0}'.format(portiaConfig['authorization']) }
+    if headers is not None:
+        h = { **h, **headers }  # Takes the arguments and turn them into a dictionary
+
+    url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
+
+    start = time.time()
+    response = requests.delete(url, headers=h)
+    end = time.time()
+    elapsed = end - start
+
+    if portiaConfig['debug'] == True:
+        print('[portia-debug]: status: {0} | {1:.4f} sec. | {2}'.format(response.status_code, elapsed, url))
+
+    return response
+
 def buildGetParams(params):
 
     getParams = ''
@@ -67,7 +103,7 @@ def buildGetParams(params):
                 getParams += '?'
                 hasParams = True
 
-            # Padronizing values
+            # Standardizing values
             if value == True:
                 value = 'true'
             elif value == False:
@@ -296,7 +332,7 @@ def translateThingCode(thingCode):
     elif thingCode == 9:
         return 'SondaHydroTemp_v1'
     elif thingCode == 10:
-        return 'FarmBrain_v1'
+        return 'Gateway_v0'
     elif thingCode == 11:
         return 'HubUniversal_v1'
     elif thingCode == 12:
@@ -330,11 +366,13 @@ def translateThingCode(thingCode):
     elif thingCode == 26:
         return 'SmaaiSiloWeight'
     elif thingCode == 27:
-        return 'VirtualGateway_v1'
+        return 'VirtualGateway_v0'
     elif thingCode == 28:
         return 'VirtualHubAmbientte'
     elif thingCode == 29:
-        return 'HubWireless_v1'
+        return 'HubBluetooth_v1'
+    elif thingCode == 30:
+        return 'ProbeTruTestS2'
     else:
         return 'Desconhecido'
 
