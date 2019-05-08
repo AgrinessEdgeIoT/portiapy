@@ -128,8 +128,8 @@ class EdgePipelineAxiom:
 	def create(self, payload):
 		return axioms.store(self.portiaConfig, payload)
 
-	def display(self, axiomName):
-		return axioms.show(self.portiaConfig, axiomName)
+	def display(self, axiomName, showParams=False):
+		return axioms.show(self.portiaConfig, axiomName, showParams)
 
 	def update(self, axiomName, payload):
 		return axioms.update(self.portiaConfig, axiomName, payload)
