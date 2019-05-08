@@ -38,8 +38,8 @@ def queryByPortSensor(portiaConfig, edgeId, port, sensor, last=False, params={ '
 
             return dimensionSeries
 
-        except:
-            raise Exception('couldn\'t create pandas data frame')
+        except Exception as err:
+            raise Exception( 'couldn\'t create pandas data frame: {}'.format(err) )
     else:
         raise Exception('couldn\'t retrieve data')
 
@@ -70,8 +70,8 @@ def queryByPortDimension(portiaConfig, edgeId, port, dimensionCode, last=False, 
 
             return dimensionSeries
 
-        except:
-            raise Exception('couldn\'t create pandas data frame')
+        except Exception as err:
+            raise Exception( 'couldn\'t create pandas data frame: {}'.format(err) )
     else:
         raise Exception('couldn\'t retrieve data')
 
@@ -102,7 +102,7 @@ def queryByPortSensorDimension(portiaConfig, edgeId, port, sensor, dimensionCode
 
             return dimensionSeries
 
-        except:
-            raise Exception('couldn\'t create pandas data frame')
+        except Exception as err:
+            raise Exception( 'couldn\'t create pandas data frame: {}'.format(err) )
     else:
         raise Exception('couldn\'t retrieve data')
