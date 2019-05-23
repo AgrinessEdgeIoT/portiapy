@@ -106,9 +106,9 @@ def buildGetParams(params):
                 hasParams = True
 
             # Standardizing values
-            if value == True:
+            if isinstance(value, bool) and value == True:
                 value = 'true'
-            elif value == False:
+            elif isinstance(value, bool) and value == False:
                 value = 'false'
 
             getParams += '{0}={1}'.format(key, value)
@@ -493,8 +493,8 @@ def convert_json(response, portiaConfig):
 
         return dimensionSeries
     else:
-        dimensionSeries = json.loads(response.text)
-        raise Exception('couldn\'t retrieve data: {0}'.format(dimensionSeries['message']))
+        err = json.loads(response.text)
+        raise Exception('couldn\'t retrieve data: {0}'.format(err['message']))
 
 
 response_convert = {
