@@ -3,26 +3,28 @@
 #####################################
 
 # Libraries
-from datetime import date, datetime, timedelta, timezone    # Basic date and time types
-import copy                                                 # Shallow and deep copy operations
-import json                                                 # JSON encoder and decoder
-import time                                                 # Time access and conversions
+from datetime import date, datetime, timedelta, timezone  # Basic date and time types
+import copy  # Shallow and deep copy operations
+import json  # JSON encoder and decoder
+import time  # Time access and conversions
+
 
 # Functions
 def about():
     print('portiapy.utils - an Agriness Edge project')
 
+
 #####################################
 #        REST API Management        #
 #####################################
 
-import requests     # Simple HTTP library
-    
-def httpGetRequest(portiaConfig, endpoint, headers=None):
+import requests  # Simple HTTP library
 
-    h = { 'Authorization': 'Bearer {0}'.format(portiaConfig['authorization']) }
+
+def httpGetRequest(portiaConfig, endpoint, headers=None):
+    h = {'Authorization': 'Bearer {0}'.format(portiaConfig['authorization'])}
     if headers is not None:
-        h = { **h, **headers }  # Takes the arguments and turn them into a dictionary
+        h = {**h, **headers}  # Takes the arguments and turn them into a dictionary
 
     url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
 
@@ -36,11 +38,11 @@ def httpGetRequest(portiaConfig, endpoint, headers=None):
 
     return response
 
-def httpPostRequest(portiaConfig, endpoint, payload, headers=None):
 
-    h = { 'Authorization': 'Bearer {0}'.format(portiaConfig['authorization']) }
+def httpPostRequest(portiaConfig, endpoint, payload, headers=None):
+    h = {'Authorization': 'Bearer {0}'.format(portiaConfig['authorization'])}
     if headers is not None:
-        h = { **h, **headers }  # Takes the arguments and turn them into a dictionary
+        h = {**h, **headers}  # Takes the arguments and turn them into a dictionary
 
     url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
 
@@ -54,11 +56,11 @@ def httpPostRequest(portiaConfig, endpoint, payload, headers=None):
 
     return response
 
-def httpPutRequest(portiaConfig, endpoint, payload, headers=None):
 
-    h = { 'Authorization': 'Bearer {0}'.format(portiaConfig['authorization']) }
+def httpPutRequest(portiaConfig, endpoint, payload, headers=None):
+    h = {'Authorization': 'Bearer {0}'.format(portiaConfig['authorization'])}
     if headers is not None:
-        h = { **h, **headers }  # Takes the arguments and turn them into a dictionary
+        h = {**h, **headers}  # Takes the arguments and turn them into a dictionary
 
     url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
 
@@ -72,11 +74,11 @@ def httpPutRequest(portiaConfig, endpoint, payload, headers=None):
 
     return response
 
-def httpDeleteRequest(portiaConfig, endpoint, headers=None):
 
-    h = { 'Authorization': 'Bearer {0}'.format(portiaConfig['authorization']) }
+def httpDeleteRequest(portiaConfig, endpoint, headers=None):
+    h = {'Authorization': 'Bearer {0}'.format(portiaConfig['authorization'])}
     if headers is not None:
-        h = { **h, **headers }  # Takes the arguments and turn them into a dictionary
+        h = {**h, **headers}  # Takes the arguments and turn them into a dictionary
 
     url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
 
@@ -90,8 +92,8 @@ def httpDeleteRequest(portiaConfig, endpoint, headers=None):
 
     return response
 
-def buildGetParams(params):
 
+def buildGetParams(params):
     getParams = ''
     hasParams = False
 
@@ -104,143 +106,161 @@ def buildGetParams(params):
                 hasParams = True
 
             # Standardizing values
-            if value == True:
+            if isinstance(value, bool) and value == True:
                 value = 'true'
-            elif value == False:
+            elif isinstance(value, bool) and value == False:
                 value = 'false'
 
             getParams += '{0}={1}'.format(key, value)
 
     return getParams
 
+
 #####################################
 #            Plotting               #
 #####################################
 
-from dateutil import tz                                         # Powerful extensions to datetime
-import pandas                                                   # Data analysis tools for Python
-import plotly.graph_objs as plotlygo                            # Modern visualization for the data era
+from dateutil import tz  # Powerful extensions to datetime
+import pandas  # Data analysis tools for Python
+import plotly.graph_objs as plotlygo  # Modern visualization for the data era
 import plotly.offline as plotly
-import pytz                                                     # World timezone definitions for Python
+import pytz  # World timezone definitions for Python
+
 
 def plotSelectionsFromDataframes(dataFrames, timezone='Etc/GMT-3'):
-
     lines = []
 
     for i, dataFrame in enumerate(dataFrames):
         dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(timezone)
-        lines.append( plotlygo.Scatter( y=dataFrame.dimension_value, x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Sensor {0}".format(i) ) )
+        lines.append(plotlygo.Scatter(y=dataFrame.dimension_value, x=dataFrame.header_timestamp, mode='lines+markers',
+                                      name="Sensor {0}".format(i)))
 
-    data   = plotlygo.Data(lines)
+    data = plotlygo.Data(lines)
     layout = plotlygo.Layout(width=1100, height=650)
-    plotly.iplot( plotlygo.Figure(data=data, layout=layout) )
+    plotly.iplot(plotlygo.Figure(data=data, layout=layout))
+
 
 def plotSummariesFromDataframes(dataFrames, timezone='Etc/GMT-3'):
-   
     lines = []
 
     for dataFrame in dataFrames:
-        dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(timezone)
+        dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(
+            timezone)
 
-#         timeAxis = []
-#         for i, line in enumerate(dataFrame['header_timestamp']):
-#             timeAxis.append( dataFrame['header_timestamp'][i] )
+        #         timeAxis = []
+        #         for i, line in enumerate(dataFrame['header_timestamp']):
+        #             timeAxis.append( dataFrame['header_timestamp'][i] )
 
-        lines.append( plotlygo.Bar(y=dataFrame['number_of_packages'], x=dataFrame.header_timestamp, name = "Packages", opacity = 0.1 ) )
+        lines.append(plotlygo.Bar(y=dataFrame['number_of_packages'], x=dataFrame.header_timestamp, name="Packages", opacity=0.1))
+
         if 'max' in dataFrame.columns:
-            lines.append( plotlygo.Scatter(y=dataFrame['max'],    x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Max",    yaxis = 'y2' ))
+            lines.append(plotlygo.Scatter(y=dataFrame['max'], x=dataFrame.header_timestamp, mode='lines+markers', name="Max", yaxis='y2'))
+
         if 'avg' in dataFrame.columns:
-            lines.append( plotlygo.Scatter(y=dataFrame['avg'],    x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Avg",    yaxis = 'y2' ))
+            lines.append(plotlygo.Scatter(y=dataFrame['avg'], x=dataFrame.header_timestamp, mode='lines+markers', name="Avg", yaxis='y2'))
+
         if 'min' in dataFrame.columns:
-            lines.append( plotlygo.Scatter(y=dataFrame['min'],    x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Min",    yaxis = 'y2' ))
+            lines.append(plotlygo.Scatter(y=dataFrame['min'], x=dataFrame.header_timestamp, mode='lines+markers', name="Min", yaxis='y2'))
+
         if 'median' in dataFrame.columns:
-            lines.append( plotlygo.Scatter(y=dataFrame['median'], x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Median", yaxis = 'y2' ))
+            lines.append(plotlygo.Scatter(y=dataFrame['median'], x=dataFrame.header_timestamp, mode='lines+markers', name="Median", yaxis='y2'))
+
         if 'mode' in dataFrame.columns:
-            lines.append( plotlygo.Scatter(y=dataFrame['mode'],   x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Mode",   yaxis = 'y2' ))
+            lines.append(plotlygo.Scatter(y=dataFrame['mode'], x=dataFrame.header_timestamp, mode='lines+markers', name="Mode", yaxis='y2'))
+
         if 'sum' in dataFrame.columns:
-            lines.append( plotlygo.Scatter(y=dataFrame['sum'],    x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Sum",    yaxis = 'y2', visible= 'legendonly') )
+            lines.append(plotlygo.Scatter(y=dataFrame['sum'], x=dataFrame.header_timestamp, mode='lines+markers', name="Sum", yaxis='y2',
+                                          visible='legendonly'))
+
         if 'stddev' in dataFrame.columns:
-            lines.append( plotlygo.Scatter(y=dataFrame['stddev'], x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Stddev", yaxis = 'y2', visible= 'legendonly') )
+            lines.append(plotlygo.Scatter(y=dataFrame['stddev'], x=dataFrame.header_timestamp, mode='lines+markers', name="Stddev", yaxis='y2',
+                                          visible='legendonly'))
+
         if 'spread' in dataFrame.columns:
-            lines.append( plotlygo.Scatter(y=dataFrame['spread'], x=dataFrame.header_timestamp, mode = 'lines+markers', name = "Spread", yaxis = 'y2', visible= 'legendonly') )
+            lines.append(plotlygo.Scatter(y=dataFrame['spread'], x=dataFrame.header_timestamp, mode='lines+markers', name="Spread", yaxis='y2',
+                                          visible='legendonly'))
 
     data = plotlygo.Data(lines)
-    layout = plotlygo.Layout(width=1100, height=650, yaxis=dict(title='Number of Packages', side='right'), yaxis2=dict(title='Dimension Value', overlaying='y',side='left'))
-    plotly.iplot( plotlygo.Figure(data=data, layout=layout) )
+    layout = plotlygo.Layout(width=1100, height=650, yaxis=dict(title='Number of Packages', side='right'),
+                             yaxis2=dict(title='Dimension Value', overlaying='y', side='left'))
+    plotly.iplot(plotlygo.Figure(data=data, layout=layout))
+
 
 #####################################
 #            Widget Utils           #
 #####################################
 
-import arrow    # Better dates and times for Python
+import arrow  # Better dates and times for Python
+
 
 def mapDevicePortsToDropdownWidget(edgeid):
     portMapping = {}
-    
-    response = httpGetRequest( '/describe/device/{0}/ports/last?precision=ms'.format(edgeid) )
+
+    response = httpGetRequest('/describe/device/{0}/ports/last?precision=ms'.format(edgeid))
 
     if response.status_code == 200:
         d = json.loads(response.text)
         for port in d['ports']:
-
             label = "{0:3} | {1:25} ({2})".format(
                 port['port'],
                 translateThingCode(port["dimension_thing_code"]),
-                arrow.get( port["header_timestamp"]/1000, tzinfo=tz.gettz('America/Sao_Paulo') ).humanize()
+                arrow.get(port["header_timestamp"] / 1000, tzinfo=tz.gettz('America/Sao_Paulo')).humanize()
             )
 
             portMapping[label] = port['port']
         return portMapping
-        
+
     else:
         raise Exception('Couldn\'t retrieve data')
 
+
 def mapDevicePortSensorsToDropdownWidget(edgeid, port):
     sensorMapping = {}
-    
-    response = httpGetRequest( '/describe/device/{0}/port/{1}/sensors/last?precision=ms'.format(edgeid, port) )
+
+    response = httpGetRequest('/describe/device/{0}/port/{1}/sensors/last?precision=ms'.format(edgeid, port))
 
     if response.status_code == 200:
         d = json.loads(response.text)
         for sensor in d['sensors']:
-
             label = "{0:3} | {1:25} | {2:6}{3:15} ({4})".format(
                 sensor['sensor'],
                 translateDimensionCode(sensor["dimension_code"]),
                 sensor["dimension_value"],
                 translateUnityCode(sensor["dimension_unity_code"]),
-                arrow.get( sensor["header_timestamp"]/1000, tzinfo=tz.gettz('America/Sao_Paulo') ).humanize()
+                arrow.get(sensor["header_timestamp"] / 1000, tzinfo=tz.gettz('America/Sao_Paulo')).humanize()
             )
 
             sensorMapping[label] = sensor['sensor']
         return sensorMapping
-        
+
     else:
         raise Exception('Couldn\'t retrieve data')
-        
+
+
 def mapDevicePortSensorDimensionsToDropdownWidget(edgeid, port, sensor):
     dimensionMapping = {}
-    
-    response = httpGetRequest( '/describe/device/{0}/port/{1}/sensor/{2}/dimensions/last?precision=ms'.format(edgeid, port, sensor) )
+
+    response = httpGetRequest(
+        '/describe/device/{0}/port/{1}/sensor/{2}/dimensions/last?precision=ms'.format(edgeid, port, sensor))
 
     if response.status_code == 200:
         d = json.loads(response.text)
         for dimension in d['dimensions']:
-
             label = "{0:3} | {1:25} | {2:6}{3:15} ({4})".format(
                 dimension['dimension_code'],
                 translateDimensionCode(dimension["dimension_code"]),
                 dimension["dimension_value"],
                 translateUnityCode(dimension["dimension_unity_code"]),
-                arrow.get( dimension["header_timestamp"]/1000, tzinfo=tz.gettz('America/Sao_Paulo') ).humanize()
+                arrow.get(dimension["header_timestamp"] / 1000, tzinfo=tz.gettz('America/Sao_Paulo')).humanize()
             )
-            
+
             dimensionMapping[label] = dimension['dimension_code']
         return dimensionMapping
-        
+
     else:
         raise Exception('Couldn\'t retrieve data')
-        
+
+
 #####################################
 #         Portia Labeling           #
 #####################################
@@ -249,7 +269,8 @@ def humanize(df, datetime=False):
 
         if datetime == True:
             df['header_timestamp'] = df['header_timestamp'].astype(str)
-            df.at[index, 'header_timestamp'] = arrow.get( int(row['header_timestamp'])/1000, tzinfo=tz.gettz('America/Sao_Paulo') ).humanize()
+            df.at[index, 'header_timestamp'] = arrow.get(int(row['header_timestamp']) / 1000,
+                                                         tzinfo=tz.gettz('America/Sao_Paulo')).humanize()
 
         if 'dimension_code' in df.columns:
             df['dimension_code'] = df['dimension_code'].astype(str)
@@ -271,6 +292,7 @@ def humanize(df, datetime=False):
         df.rename(columns={'dimension_thing_code': 'dimension_thing'}, inplace=True)
 
     return df
+
 
 def translateUnityCode(unityCode):
     if unityCode == 0:
@@ -309,6 +331,7 @@ def translateUnityCode(unityCode):
         return 'dias'
     else:
         return ''
+
 
 def translateThingCode(thingCode):
     if thingCode == 0:
@@ -376,6 +399,7 @@ def translateThingCode(thingCode):
     else:
         return 'Desconhecido'
 
+
 def translateDimensionCode(dimensionCode):
     dimensionCode = int(dimensionCode)
     if dimensionCode == 0:
@@ -436,3 +460,44 @@ def translateDimensionCode(dimensionCode):
         return 'Dia do Lote'
     else:
         return 'Desconhecido'
+
+
+#####################################
+#         Converter Types           #
+#####################################
+
+from io import StringIO  # Read and write strings as files
+import pandas  # Data analysis tools for Python
+import json
+
+
+def convert_csv(response, portiaConfig):
+    if response.status_code == 200:
+        try:
+            dimensionSeries = pandas.read_csv(StringIO(response.text), sep=';')
+            if portiaConfig['debug']:
+                print('[portia-debug]: {0} rows'.format(len(dimensionSeries.index)))
+
+            return dimensionSeries
+        except Exception as err:
+            raise Exception('couldn\'t create pandas data frame: {0}'.format(err))
+    else:
+        raise Exception('couldn\'t retrieve data')
+
+
+def convert_json(response, portiaConfig):
+    if response.status_code == 200:
+        dimensionSeries = json.loads(response.text)
+        if portiaConfig['debug']:
+            print('[portia-debug]: {0}'.format(dimensionSeries))
+
+        return dimensionSeries
+    else:
+        err = json.loads(response.text)
+        raise Exception('couldn\'t retrieve data: {0}'.format(err['message']))
+
+
+response_convert = {
+    'text/csv': convert_csv,
+    'application/json': convert_json
+}
