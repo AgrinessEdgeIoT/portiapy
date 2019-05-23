@@ -131,8 +131,7 @@ def plotSelectionsFromDataframes(dataFrames, timezone='Etc/GMT-3'):
     lines = []
 
     for i, dataFrame in enumerate(dataFrames):
-        dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(
-            timezone)
+        dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(timezone)
         lines.append(plotlygo.Scatter(y=dataFrame.dimension_value, x=dataFrame.header_timestamp, mode='lines+markers',
                                       name="Sensor {0}".format(i)))
 
@@ -152,37 +151,34 @@ def plotSummariesFromDataframes(dataFrames, timezone='Etc/GMT-3'):
         #         for i, line in enumerate(dataFrame['header_timestamp']):
         #             timeAxis.append( dataFrame['header_timestamp'][i] )
 
-        lines.append(
-            plotlygo.Bar(y=dataFrame['number_of_packages'], x=dataFrame.header_timestamp, name="Packages", opacity=0.1))
+        lines.append(plotlygo.Bar(y=dataFrame['number_of_packages'], x=dataFrame.header_timestamp, name="Packages", opacity=0.1))
+
         if 'max' in dataFrame.columns:
-            lines.append(
-                plotlygo.Scatter(y=dataFrame['max'], x=dataFrame.header_timestamp, mode='lines+markers', name="Max",
-                                 yaxis='y2'))
+            lines.append(plotlygo.Scatter(y=dataFrame['max'], x=dataFrame.header_timestamp, mode='lines+markers', name="Max", yaxis='y2'))
+
         if 'avg' in dataFrame.columns:
-            lines.append(
-                plotlygo.Scatter(y=dataFrame['avg'], x=dataFrame.header_timestamp, mode='lines+markers', name="Avg",
-                                 yaxis='y2'))
+            lines.append(plotlygo.Scatter(y=dataFrame['avg'], x=dataFrame.header_timestamp, mode='lines+markers', name="Avg", yaxis='y2'))
+
         if 'min' in dataFrame.columns:
-            lines.append(
-                plotlygo.Scatter(y=dataFrame['min'], x=dataFrame.header_timestamp, mode='lines+markers', name="Min",
-                                 yaxis='y2'))
+            lines.append(plotlygo.Scatter(y=dataFrame['min'], x=dataFrame.header_timestamp, mode='lines+markers', name="Min", yaxis='y2'))
+
         if 'median' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['median'], x=dataFrame.header_timestamp, mode='lines+markers',
-                                          name="Median", yaxis='y2'))
+            lines.append(plotlygo.Scatter(y=dataFrame['median'], x=dataFrame.header_timestamp, mode='lines+markers', name="Median", yaxis='y2'))
+
         if 'mode' in dataFrame.columns:
-            lines.append(
-                plotlygo.Scatter(y=dataFrame['mode'], x=dataFrame.header_timestamp, mode='lines+markers', name="Mode",
-                                 yaxis='y2'))
+            lines.append(plotlygo.Scatter(y=dataFrame['mode'], x=dataFrame.header_timestamp, mode='lines+markers', name="Mode", yaxis='y2'))
+
         if 'sum' in dataFrame.columns:
-            lines.append(
-                plotlygo.Scatter(y=dataFrame['sum'], x=dataFrame.header_timestamp, mode='lines+markers', name="Sum",
-                                 yaxis='y2', visible='legendonly'))
+            lines.append(plotlygo.Scatter(y=dataFrame['sum'], x=dataFrame.header_timestamp, mode='lines+markers', name="Sum", yaxis='y2',
+                                          visible='legendonly'))
+
         if 'stddev' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['stddev'], x=dataFrame.header_timestamp, mode='lines+markers',
-                                          name="Stddev", yaxis='y2', visible='legendonly'))
+            lines.append(plotlygo.Scatter(y=dataFrame['stddev'], x=dataFrame.header_timestamp, mode='lines+markers', name="Stddev", yaxis='y2',
+                                          visible='legendonly'))
+
         if 'spread' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['spread'], x=dataFrame.header_timestamp, mode='lines+markers',
-                                          name="Spread", yaxis='y2', visible='legendonly'))
+            lines.append(plotlygo.Scatter(y=dataFrame['spread'], x=dataFrame.header_timestamp, mode='lines+markers', name="Spread", yaxis='y2',
+                                          visible='legendonly'))
 
     data = plotlygo.Data(lines)
     layout = plotlygo.Layout(width=1100, height=650, yaxis=dict(title='Number of Packages', side='right'),
@@ -463,7 +459,7 @@ def translateDimensionCode(dimensionCode):
     elif dimensionCode == 27:
         return 'Dia do Lote'
     else:
-        return
+        return 'Desconhecido'
 
 
 #####################################
@@ -478,32 +474,27 @@ import json
 def convert_csv(response, portiaConfig):
     if response.status_code == 200:
         try:
-
             dimensionSeries = pandas.read_csv(StringIO(response.text), sep=';')
             if portiaConfig['debug']:
                 print('[portia-debug]: {0} rows'.format(len(dimensionSeries.index)))
 
             return dimensionSeries
-
         except Exception as err:
-            raise Exception('couldn\'t create pandas data frame: {}'.format(err))
+            raise Exception('couldn\'t create pandas data frame: {0}'.format(err))
     else:
         raise Exception('couldn\'t retrieve data')
 
 
 def convert_json(response, portiaConfig):
     if response.status_code == 200:
-
-        d = json.loads(response.text)
+        dimensionSeries = json.loads(response.text)
         if portiaConfig['debug']:
-            print('[portia-debug]: {0}'.format(d))
+            print('[portia-debug]: {0}'.format(dimensionSeries))
 
-        return d
-
+        return dimensionSeries
     else:
-
-        d = json.loads(response.text)
-        raise Exception('couldn\'t retrieve data: {0}'.format(d['message']))
+        dimensionSeries = json.loads(response.text)
+        raise Exception('couldn\'t retrieve data: {0}'.format(dimensionSeries['message']))
 
 
 response_convert = {
