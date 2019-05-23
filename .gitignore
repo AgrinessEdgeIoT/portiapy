@@ -1,7 +1,18 @@
-# Created by https://www.gitignore.io/api/jupyternotebook
-
-### JupyterNotebook ###
 */.ipynb_checkpoints/*
 
+venv/
 
-# End of https://www.gitignore.io/api/jupyternotebook
+*.pyc
+__pycache__/
+
+instance/
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+dist/
+build/
+*.egg-info/
+
+.env
