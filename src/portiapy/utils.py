@@ -337,15 +337,19 @@ def translateUnityCode(unity_code, locale='en-us', custom_unity_codes=None):
     }
 
     if custom_unity_codes is None:
-        if default_unity_codes[locale][unity_code] is None:
+        if default_unity_codes.get(locale) is None or \
+           default_unity_codes.get(locale).get(unity_code) is None:
             return ''
         else:
-            return default_unity_codes[locale][unity_code]
+            return default_unity_codes.get(locale).get(unity_code)
     else:
-        if custom_unity_codes[locale][unity_code] is None:
+        if not isinstance(custom_unity_codes, dict) or \
+           custom_unity_codes.get(locale) is None or \
+           not isinstance(custom_unity_codes.get(locale), dict) or \
+           custom_unity_codes.get(locale).get(unity_code) is None:
             return ''
         else:
-            return custom_unity_codes[locale][unity_code]
+            return custom_unity_codes.get(locale).get(unity_code)
 
 
 def translateThingCode(thing_code):
@@ -415,7 +419,8 @@ def translateThingCode(thing_code):
         return 'Unknown'
 
 
-def translateDimensionCode(dimension_code, locale='en-us', custom_dimension_codes=None):
+def translateDimensionCode(dimension_code, locale='en-us',
+                           custom_dimension_codes=None):
     dimension_code = int(dimension_code)
 
     default_dimension_codes = {
@@ -484,15 +489,19 @@ def translateDimensionCode(dimension_code, locale='en-us', custom_dimension_code
     }
 
     if custom_dimension_codes is None:
-        if default_dimension_codes[locale][dimension_code] is None:
+        if default_dimension_codes.get(locale) is None or \
+           default_dimension_codes.get(locale).get(dimension_code) is None:
             return ''
         else:
-            return default_dimension_codes[locale][dimension_code]
+            return default_dimension_codes.get(locale).get(dimension_code)
     else:
-        if custom_dimension_codes[locale][dimension_code] is None:
+        if not isinstance(custom_dimension_codes, dict) or \
+           custom_dimension_codes.get(locale) is None or \
+           not isinstance(custom_dimension_codes.get(locale), dict) or \
+           custom_dimension_codes.get(locale).get(dimension_code) is None:
             return ''
         else:
-            return custom_dimension_codes[locale][dimension_code]
+            return custom_dimension_codes.get(locale).get(dimension_code)
 
 
 #####################################
