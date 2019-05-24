@@ -339,7 +339,7 @@ def translateUnityCode(unity_code, locale='en-us', custom_unity_codes=None):
     if custom_unity_codes is None:
         if default_unity_codes.get(locale) is None or \
            default_unity_codes.get(locale).get(unity_code) is None:
-            return ''
+            return 'Unity Code {}'.format(unity_code)
         else:
             return default_unity_codes.get(locale).get(unity_code)
     else:
@@ -347,7 +347,7 @@ def translateUnityCode(unity_code, locale='en-us', custom_unity_codes=None):
            custom_unity_codes.get(locale) is None or \
            not isinstance(custom_unity_codes.get(locale), dict) or \
            custom_unity_codes.get(locale).get(unity_code) is None:
-            return ''
+            return 'Unity Code {}'.format(unity_code)
         else:
             return custom_unity_codes.get(locale).get(unity_code)
 
@@ -416,7 +416,7 @@ def translateThingCode(thing_code):
     elif thing_code == 30:
         return 'ProbeTruTestS2'
     else:
-        return 'Unknown'
+        return 'Thing Code {}'.format(thing_code)
 
 
 def translateDimensionCode(dimension_code, locale='en-us',
@@ -425,38 +425,38 @@ def translateDimensionCode(dimension_code, locale='en-us',
 
     default_dimension_codes = {
         'en-us': {
-            0:  '',
-            1:  'Point Temperature',
+            0:  'Unamed Dimension',
+            1:  'Punctual Temperature',
             2:  'Average Temperature',
-            3:  'Point Umidity',
+            3:  'Punctual Umidity',
             4:  'Average Umidity',
-            5:  'Point Concentration',
+            5:  'Punctual Concentration',
             6:  'Average Concentration',
             7:  'Cumulative Flow',
-            8:  'Point Flow',
-            9:  'Point Water Temperature',
-            10: 'Point Weight',
+            8:  'Punctual Flow',
+            9:  'Punctual Water Temperature',
+            10: 'Punctual Weight',
             11: 'Average Weight',
             12: 'Status',
-            13: 'Point CO2 Concentration',
+            13: 'Punctual CO2 Concentration',
             14: 'Number of Cycles',
-            15: 'Uptime',
+            15: 'Cumulative Time',
             16: 'RSSI',
             17: 'Free Memory',
             18: 'Free Storage',
             19: 'System Load',
             20: 'File Size',
-            21: 'Time',
+            21: 'Punctual Time',
             22: 'Profile',
-            23: 'Point Voltage',
-            24: 'Point Pressure',
+            23: 'Punctual Voltage',
+            24: 'Punctual Pressure',
             25: 'Average Pressure',
             26: 'Model',
             27: 'Lot Day',
             28: 'Average Voltage'
         },
         'pt-br': {
-            0:  '',
+            0:  'Dimensão Anônima',
             1:  'Temperatura Pontual',
             2:  'Temperatura Média',
             3:  'Umidade Pontual',
@@ -471,13 +471,13 @@ def translateDimensionCode(dimension_code, locale='en-us',
             12: 'Estado',
             13: 'Concentração de CO2 Pontual',
             14: 'Número de Ciclos',
-            15: 'Uptime',
+            15: 'Tempo Acumulado',
             16: 'RSSI',
             17: 'Memória Livre',
             18: 'Armazenamento Livre',
             19: 'Carga do Sistema',
             20: 'Tamanho de Arquivo',
-            21: 'Tempo',
+            21: 'Tempo Pontual',
             22: 'Perfil',
             23: 'Tensão Elétrica Pontual',
             24: 'Pressão Pontual',
@@ -491,7 +491,7 @@ def translateDimensionCode(dimension_code, locale='en-us',
     if custom_dimension_codes is None:
         if default_dimension_codes.get(locale) is None or \
            default_dimension_codes.get(locale).get(dimension_code) is None:
-            return ''
+            return 'Dimension Code {}'.format(dimension_code)
         else:
             return default_dimension_codes.get(locale).get(dimension_code)
     else:
@@ -499,7 +499,7 @@ def translateDimensionCode(dimension_code, locale='en-us',
            custom_dimension_codes.get(locale) is None or \
            not isinstance(custom_dimension_codes.get(locale), dict) or \
            custom_dimension_codes.get(locale).get(dimension_code) is None:
-            return ''
+            return 'Dimension Code {}'.format(dimension_code)
         else:
             return custom_dimension_codes.get(locale).get(dimension_code)
 
