@@ -39,7 +39,7 @@ def resolveStrategy(strategy):
 ########################################
 def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'offset': 0, 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': True, 'mode': False, 'stddev': False, 'spread': False }):
     """Returns a pandas data frame with the portia select resultset"""
-    accept_header = portiaConfig['Accept']
+    accept_header = portiaConfig.get('Accept')
     if accept_header is None:
         accept_header = 'text/csv'
 
@@ -57,7 +57,7 @@ def queryByPortSensor(portiaConfig, edgeId, port, sensor, strategy=SummaryStrate
 ########################################
 def queryByPortSensorDimension(portiaConfig, edgeId, port, sensor, dimensionCode, strategy=SummaryStrategies.PER_HOUR, interval=1, params={ 'from': None, 'to': None, 'order': None, 'precision': 'ms', 'offset': 0, 'min': True, 'max': True, 'sum': True, 'avg': True, 'median': True, 'mode': False, 'stddev': False, 'spread': False }):
     """Returns a pandas data frame with the portia select resultset"""
-    accept_header = portiaConfig['Accept']
+    accept_header = portiaConfig.get('Accept')
     if accept_header is None:
         accept_header = 'text/csv'
 
