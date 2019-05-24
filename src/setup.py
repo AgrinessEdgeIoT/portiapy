@@ -14,7 +14,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/AgrinessEdgeIoT/portiapy',
     packages=find_packages(),
-    install_requires=['requests>=2.19.1', 'pytz>=2018.5', 'python-dateutil>=2.7.3', 'plotly>=3.1.1', 'pandas>=0.23.4', 'arrow>=0.12.1'],
+    install_requires=['requests>=2.20.0', 'pytz>=2018.5', 'python-dateutil>=2.7.3', 'plotly>=3.1.1', 'pandas>=0.23.4', 'arrow>=0.12.1'],
     #scripts=['portia'],
     classifiers=(
         'Programming Language :: Python :: 3',
