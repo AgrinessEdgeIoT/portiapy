@@ -15,3 +15,6 @@ portiaConfigExample = {
 # Functions
 def about():
     print("portiapy - an Agriness Edge project")
+
+def version():
+	print("portiapy - v1.1.6")

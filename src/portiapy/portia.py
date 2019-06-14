@@ -5,6 +5,7 @@
 # Libraries
 import pandas                     # Data analysis tools for Python
 import types					  # Names for built-in types
+import builtins
 
 import portiapy.phases as phases
 import portiapy.axioms as axioms
@@ -21,9 +22,17 @@ import portiapy.utils as utils
 def about():
     print("portiapy.device - an Agriness Edge project")
 
+class CustomDict(dict):
+	def humanize(self, datetime=False, locale='en-us', custom_unity_codes=None,
+                 custom_dimension_codes=None):
+		return utils.humanizeJson(self, datetime, locale, custom_unity_codes,
+                 				  custom_dimension_codes)
+
 def addHumanizeFunction(obj):
 	if isinstance(obj, pandas.DataFrame):
 		obj.humanize = types.MethodType( utils.humanize, obj )
+	elif isinstance(obj, dict):
+		obj = CustomDict(obj)
 	return obj
 
 # Classes
@@ -196,9 +205,9 @@ class EdgeDevice:
 	########################### Profile ############################
 	def profile(self, strategy=profile.ProfileStrategies.BY_ZERO_PORT, interval=30, params=None):
 		if params is None:
-			return profile.deviceProfile(self.portiaConfig, self.edgeId, strategy, interval)
+			return addHumanizeFunction( profile.deviceProfile(self.portiaConfig, self.edgeId, strategy, interval) )
 		else:
-			return profile.deviceProfile(self.portiaConfig, self.edgeId, strategy, interval, params)
+			return addHumanizeFunction( profile.deviceProfile(self.portiaConfig, self.edgeId, strategy, interval, params) )
 
 # class EdgeDevice
 
@@ -243,9 +252,9 @@ class EdgeDevicePort:
 	########################### Profile ############################
 	def profile(self, strategy=profile.ProfileStrategies.BY_ZERO_PORT, interval=30, params=None):
 		if params is None:
-			return profile.portProfile(self.portiaConfig, self.edgeId, self.port, strategy, interval)
+			return addHumanizeFunction( profile.portProfile(self.portiaConfig, self.edgeId, self.port, strategy, interval) )
 		else:
-			return profile.portProfile(self.portiaConfig, self.edgeId, self.port, strategy, interval, params)
+			return addHumanizeFunction( profile.portProfile(self.portiaConfig, self.edgeId, self.port, strategy, interval, params) )
 
 # class EdgeDevicePort
 
@@ -279,9 +288,9 @@ class EdgeDeviceSensor:
 	########################### Profile ############################
 	def profile(self, strategy=profile.ProfileStrategies.BY_ZERO_PORT, interval=30, params=None):
 		if params is None:
-			return profile.sensorProfile(self.portiaConfig, self.edgeId, self.port, self.sensor, strategy, interval)
+			return addHumanizeFunction( profile.sensorProfile(self.portiaConfig, self.edgeId, self.port, self.sensor, strategy, interval) )
 		else:
-			return profile.sensorProfile(self.portiaConfig, self.edgeId, self.port, self.sensor, strategy, interval, params)
+			return addHumanizeFunction( profile.sensorProfile(self.portiaConfig, self.edgeId, self.port, self.sensor, strategy, interval, params) )
 
 	############################ Select ############################
 	def select(self, last=False, params=None):
