@@ -442,6 +442,39 @@ def humanize(df, datetime=False, locale='en-us', custom_unity_codes=None, custom
     return df
 
 
+def humanizeJson(json_, datetime=False, locale='en-us', custom_unity_codes=None,
+                 custom_dimension_codes=None):
+    
+    json_['thing_code'] = translateThingCode(json_['thing_code'])
+
+    for port in json_['ports']:
+        port['thing_code'] = translateThingCode(port['thing_code'])
+
+        for sensor in port['sensors']:
+
+            if datetime == True:
+
+                sensor['last_package']['header_datetime'] = arrow.get(
+                    sensor['last_package']['header_timestamp'] / 1000,
+                    tzinfo=tz.gettz('America/Sao_Paulo')
+                ).humanize()
+                del sensor['last_package']['header_timestamp']
+
+            sensor['last_package']['dimension'] = translateDimensionCode(
+                sensor['last_package']['dimension_code'], locale,
+                custom_dimension_codes)
+            sensor['last_package']['dimension_unity'] = translateUnityCode(
+                sensor['last_package']['dimension_unity_code'], locale,
+                custom_unity_codes)
+            sensor['last_package']['dimension_thing'] = translateThingCode(
+                sensor['last_package']['dimension_thing_code'])
+
+            del sensor['last_package']['dimension_code']
+            del sensor['last_package']['dimension_unity_code']
+            del sensor['last_package']['dimension_thing_code']
+
+    return json_
+
 def translateUnityCode(unity_code, locale='en-us', custom_unity_codes=None):
 
     if custom_unity_codes is None:
