@@ -411,39 +411,82 @@ default_dimension_codes = {
 }
 
 
-def humanize(df, datetime=False, locale='en-us', custom_unity_codes=None, custom_dimension_codes=None):
+def humanize(df, datetime=False, locale='en-us', custom_unity_codes=None,
+             custom_dimension_codes=None):
+    """Humanizes a data frame's content by translating its columns data to
+    actual text.
+
+    Parameters
+    ----------
+    df -- the data frame to be humanized
+    datetime -- if the header_timestamp column should be humanized too
+    (default False)
+    locale -- which language to use when humanizing (default 'en-us')
+    custom_unity_codes -- a dictionary with custom unity codes to use when
+    translating (default None)
+    custom_dimension_codes -- a dictionary with custom dimension codes to use
+    when translating (default None)
+    """
 
     for index, row in df.iterrows():
 
         if datetime == True:
+            datetime_locale = locale.replace('-', '_')
+
             df['header_timestamp'] = df['header_timestamp'].astype(str)
-            df.at[index, 'header_timestamp'] = arrow.get(int(row['header_timestamp']) / 1000,
-                                                         tzinfo=tz.gettz('America/Sao_Paulo')).humanize()
+
+            df.at[index, 'header_timestamp'] = arrow.get(
+                int(row['header_timestamp']) / 1000,
+                tzinfo=tz.gettz('America/Sao_Paulo')
+            ).humanize(locale=datetime_locale)
 
         if 'dimension_code' in df.columns:
             df['dimension_code'] = df['dimension_code'].astype(str)
-            df.at[index, 'dimension_code'] = translateDimensionCode(row['dimension_code'], locale, custom_dimension_codes)
+            df.at[index, 'dimension_code'] = translateDimensionCode(
+                row['dimension_code'], locale, custom_dimension_codes)
+
         if 'dimension_unity_code' in df.columns:
             df['dimension_unity_code'] = df['dimension_unity_code'].astype(str)
-            df.at[index, 'dimension_unity_code'] = translateUnityCode(row['dimension_unity_code'], locale, custom_unity_codes)
+            df.at[index, 'dimension_unity_code'] = translateUnityCode(
+                row['dimension_unity_code'], locale, custom_unity_codes)
+
         if 'dimension_thing_code' in df.columns:
             df['dimension_thing_code'] = df['dimension_thing_code'].astype(str)
-            df.at[index, 'dimension_thing_code'] = translateThingCode(row['dimension_thing_code'])
+            df.at[index, 'dimension_thing_code'] = translateThingCode(
+                row['dimension_thing_code'])
 
     if datetime == True:
-        df.rename(columns={'header_timestamp': 'header_datetime'}, inplace=True)
+        df.rename(columns={'header_timestamp': 'header_datetime'},
+                  inplace=True)
     if 'dimension_code' in df.columns:
-        df.rename(columns={'dimension_code': 'dimension'}, inplace=True)
+        df.rename(columns={'dimension_code': 'dimension'},
+                  inplace=True)
     if 'dimension_unity_code' in df.columns:
-        df.rename(columns={'dimension_unity_code': 'dimension_unity'}, inplace=True)
+        df.rename(columns={'dimension_unity_code': 'dimension_unity'},
+                  inplace=True)
     if 'dimension_thing_code' in df.columns:
-        df.rename(columns={'dimension_thing_code': 'dimension_thing'}, inplace=True)
+        df.rename(columns={'dimension_thing_code': 'dimension_thing'},
+                  inplace=True)
 
     return df
 
 
-def humanizeJson(json_, datetime=False, locale='en-us', custom_unity_codes=None,
-                 custom_dimension_codes=None):
+def humanizeJson(json_, datetime=False, locale='en-us',
+                 custom_unity_codes=None, custom_dimension_codes=None):
+    """Humanizes a JSON object's content by translating its data to actual
+    text.
+
+    Parameters
+    ----------
+    json_ -- the JSON object to be humanized
+    datetime -- if the header_timestamp column should be humanized too
+    (default False)
+    locale -- which language to use when humanizing (default 'en-us')
+    custom_unity_codes -- a dictionary with custom unity codes to use when
+    translating (default None)
+    custom_dimension_codes -- a dictionary with custom dimension codes to use
+    when translating (default None)
+    """
     
     json_['thing_code'] = translateThingCode(json_['thing_code'])
 
@@ -453,11 +496,12 @@ def humanizeJson(json_, datetime=False, locale='en-us', custom_unity_codes=None,
         for sensor in port['sensors']:
 
             if datetime == True:
+                datetime_locale = locale.replace('-', '_')
 
                 sensor['last_package']['header_datetime'] = arrow.get(
                     sensor['last_package']['header_timestamp'] / 1000,
                     tzinfo=tz.gettz('America/Sao_Paulo')
-                ).humanize()
+                ).humanize(locale=datetime_locale)
                 del sensor['last_package']['header_timestamp']
 
             sensor['last_package']['dimension'] = translateDimensionCode(
@@ -474,6 +518,7 @@ def humanizeJson(json_, datetime=False, locale='en-us', custom_unity_codes=None,
             del sensor['last_package']['dimension_thing_code']
 
     return json_
+
 
 def translateUnityCode(unity_code, locale='en-us', custom_unity_codes=None):
 
