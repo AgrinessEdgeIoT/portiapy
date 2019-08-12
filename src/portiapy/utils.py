@@ -432,6 +432,8 @@ def humanize(df, datetime=False, locale='en-us', custom_unity_codes=None,
 
         if datetime == True:
             datetime_locale = locale.replace('-', '_')
+            if datetime_locale == 'pt-br':
+                datetime_locale = 'pt'
 
             df['header_timestamp'] = df['header_timestamp'].astype(str)
 
@@ -497,6 +499,8 @@ def humanizeJson(json_, datetime=False, locale='en-us',
 
             if datetime == True:
                 datetime_locale = locale.replace('-', '_')
+                if datetime_locale == 'pt-br':
+                    datetime_locale = 'pt'
 
                 sensor['last_package']['header_datetime'] = arrow.get(
                     sensor['last_package']['header_timestamp'] / 1000,
