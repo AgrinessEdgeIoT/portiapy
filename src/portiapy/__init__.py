@@ -1,9 +1,16 @@
-#####################################    
-#             PortiaPy              #
-#####################################
+"""A small package for handling Agriness Edge's REST API.
 
-# Variables
-name = "portiapy"
+Functions: about, version
+"""
+
+from .version import __version__
+
+
+__all__ = ['axioms', 'describe', 'phases', 'portia', 'profile', 'select',
+		   'specs', 'summary', 'utils']
+
+
+name = 'portiapy'
 
 portiaConfigExample = {
 	'baseurl': 'http://localhost',
@@ -12,9 +19,13 @@ portiaConfigExample = {
 	'Accept': 'text/csv'
 }
 
-# Functions
+NAME = name
+
+PORTIA_CONFIG_EXAMPLE = portiaConfigExample
+
+
 def about():
-    print("portiapy - an Agriness Edge project")
+    print('portiapy - an Agriness Edge project')
 
 def version():
-	print("portiapy - v1.1.6")
+	print('portiapy - v{0}'.format(__version__))
