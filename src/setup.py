@@ -8,17 +8,13 @@ MODULE_NAME = 'portiapy'
 REPO_NAME = 'portiapy'
 
 
-with open('README.md') as f:
+with open('../README.md') as f:
     readme = f.read()
-
-with open('LICENSE') as f:
-    license = f.read()
 
 
 setup(
     name=MODULE_NAME,
     description='A small package for handling Agriness Edge\'s REST API',
-    license=license,
     long_description=readme,
     long_description_content_type='text/markdown',
     url='https://github.com/AgrinessEdgeIoT/{:s}'.format(REPO_NAME),
@@ -34,4 +30,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ),
+    data_files=[('VERSION', [join(MODULE_NAME, 'VERSION')])]
 )
