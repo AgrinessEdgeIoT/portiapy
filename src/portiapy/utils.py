@@ -341,7 +341,8 @@ default_thing_codes = {
     27: 'VirtualGateway_v0',
     28: 'HubAmbientte',
     29: 'HubBluetooth_v1',
-    30: 'ProbeTruTestS2'
+    30: 'ProbeTruTestS2',
+    31: 'HubLogical_v0'
 }
 
 
