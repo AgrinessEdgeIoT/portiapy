@@ -8,12 +8,12 @@ system-packages:
 	sudo apt install python-pip -y
 
 python-packages:
-	pip install -r requirements.txt
+	pip3 install -r requirements.txt
 
 install: system-packages python-packages
 
 unit-tests:
-	python -m unittest tests.test_utils -vvv
+	python3 -m unittest tests.test_utils -vvv
 
 integration-tests:
 
