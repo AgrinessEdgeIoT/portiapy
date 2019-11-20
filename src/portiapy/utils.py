@@ -286,7 +286,10 @@ default_unity_codes = {
         13: 'V',
         14: 'Pa',
         15: 'Kg',
-        16: ' day(s)'
+        16: ' day(s)',
+        17: 'mV',
+        18: 'gal',
+        19: '°F'
     },
     'pt-br': {
         0:  ' unidade(s)',
@@ -305,7 +308,10 @@ default_unity_codes = {
         13: 'V',
         14: 'Pa',
         15: 'Kg',
-        16: ' dia(s)'
+        16: ' dia(s)',
+        17: 'mV',
+        18: 'gal',
+        19: '°F'
     }
 }
 
@@ -342,7 +348,15 @@ default_thing_codes = {
     28: 'HubAmbientte',
     29: 'HubBluetooth_v1',
     30: 'ProbeTruTestS2',
-    31: 'HubLogical_v0'
+    31: 'HubLogical_v0',
+    32: 'SmaaiInlet',
+    33: 'SmaaiCurtain',
+    34: 'ProbeTruTestS3',
+    35: 'ProbeGsiT',
+    36: 'ProbeGsiU',
+    37: 'ProbeGsiH2O',
+    38: 'GsiPlatformScale',
+    39: 'GsiExhaustor'
 }
 
 
