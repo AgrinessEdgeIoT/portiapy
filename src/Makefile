@@ -1,7 +1,7 @@
 .PHONY: venv system-packages python-packages install unit-tests integration-tests tests all
 
 venv:
-	pip install --user virtualenv
+	pip3 install --user virtualenv
 	virtualenv venv
 
 system-packages:
