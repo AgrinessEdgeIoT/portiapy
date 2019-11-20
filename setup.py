@@ -20,7 +20,7 @@ setup(
     url='https://github.com/AgrinessEdgeIoT/{:s}'.format(REPO_NAME),
     author='Matheus Mota, Lucas Góes',
     author_email='matheus@agrinessedge.com, lucas@agrinessedge.com',
-    packages=find_packages(exclude=('tests', 'docs')),
+    packages=find_packages(exclude=('binder', 'tests', 'docs')),
     version=open(join(MODULE_NAME, 'VERSION')).read().strip(),
     install_requires=['requests>=2.20.0', 'pytz>=2018.5',
                       'python-dateutil>=2.7.3', 'plotly>=3.1.1',
