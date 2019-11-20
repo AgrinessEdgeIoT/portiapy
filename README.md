@@ -10,7 +10,7 @@ A Python stub for Agriness Edge's REST API.
 
 ### Prerequisites
 
-* [requests ^2.19.1](http://docs.python-requests.org/en/master/)
+* [requests ^2.20.0](http://docs.python-requests.org/en/master/)
 * [pytz ^2018.5](http://pytz.sourceforge.net/)
 * [python-dateutil ^2.7.3](https://dateutil.readthedocs.io/en/stable/)
 * [plotly ^3.1.1](https://plot.ly/)
