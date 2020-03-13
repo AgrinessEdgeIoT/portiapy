@@ -438,7 +438,7 @@ default_dimension_codes = {
         29: 'Point Light',
         30: 'Point Wind Speed',
         31: 'Point NH3 Concentration',
-        32: 'PointAngulation'
+        32: 'Point Angulation'
     },
     'pt-br': {
         0:  'Dimensão Genérica',
@@ -473,7 +473,7 @@ default_dimension_codes = {
         29: 'Luz Pontual',
         30: 'Velocidade do Vento Pontual',
         31: 'Concentração de NH3 Pontual',
-        32: 'PointAngulation'
+        32: 'Angulação Pontual'
     }
 }
 
