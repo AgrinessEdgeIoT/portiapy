@@ -294,7 +294,9 @@ default_unity_codes = {
         21: 'lx',
         22: 'm/s',
         23: 't',
-        24: 'lb'
+        24: 'lb',
+        25: 'min',
+        26: '°'
     },
     'pt-br': {
         0:  ' unidade(s)',
@@ -321,7 +323,9 @@ default_unity_codes = {
         21: 'lx',
         22: 'm/s',
         23: 't',
-        24: 'lb'
+        24: 'lb',
+        25: 'min',
+        26: '°'
     }
 }
 
@@ -368,7 +372,7 @@ default_thing_codes = {
     38: 'Sensor_GSI_AnimalScale',
     39: 'Sensor_GSI_Exhaustor',
     40: 'Collector_AgNet_Gateway_v1',
-    41: 'Sensor_AgNet_T',
+    41: 'Sensor_AgNet_T1',
     42: 'Sensor_AgNet_U',
     43: 'Collector_Roboagro_v1',
     44: 'Collector_GSI_EDGE_v1',
@@ -390,7 +394,13 @@ default_thing_codes = {
     60: 'Sensor_AgNet_FeedC',
     61: 'Sensor_AgNet_AirS',
     62: 'Sensor_AgNet_AnimalScale',
-    63: 'T4_Agriness_Virtual_v1'
+    63: 'T4_Agriness_Virtual_v1',
+    64: 'Sensor_AgNet_T2',
+    65: 'Sensor_AgNet_T3',
+    66: 'Sensor_AgNet_T4',
+    67: 'Sensor_AgNet_T5',
+    68: 'Sensor_Inobram_T_H2O',
+    69: 'Collector_Inobram_Ambientte_v3'
 }
 
 
@@ -427,7 +437,8 @@ default_dimension_codes = {
         28: 'Average Electric Voltage',
         29: 'Point Light',
         30: 'Point Wind Speed',
-        31: 'Point NH3 Concentration'
+        31: 'Point NH3 Concentration',
+        32: 'Point Angulation'
     },
     'pt-br': {
         0:  'Dimensão Genérica',
@@ -461,7 +472,8 @@ default_dimension_codes = {
         28: 'Tensão Elétrica Média',
         29: 'Luz Pontual',
         30: 'Velocidade do Vento Pontual',
-        31: 'Concentração de NH3 Pontual'
+        31: 'Concentração de NH3 Pontual',
+        32: 'Angulação Pontual'
     }
 }
 
