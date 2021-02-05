@@ -433,6 +433,60 @@ class TestEdgeDeviceSensor(unittest.TestCase):
 			self.assertEqual(row.dimension_unity, '°C')
 
 
+class TestEdgeDeviceDimensionFromDevice(unittest.TestCase):
+	"""Set of integration tests for all functions concerning the
+	EdgeDeviceDimensionFromDevice instance.
+	"""
+	@classmethod
+	def setUpClass(cls):
+		"""Creates a Portia configuration to test the instance.
+		"""
+
+		# Settings for test
+		base_url = os.getenv('PORTIA_URL', 'https://api-portia.agriness.io/v3')
+		token = os.getenv('PORTIA_TOKEN')
+
+		# Creating Portia API instance
+		cls.portia_api = portia.PortiaApi({
+			'baseurl': base_url,
+			'authorization': token,
+			'debug': False,
+			'Accept': 'text/csv'
+		})
+
+	def test_summary(self):
+		summarized_dimensions = self.portia_api.device('2DPEQ572HEXP') \
+			.dimension(1).summary(None, params={
+		        'from': 1609470000000,
+		        'to': 1609729199000,
+		        'lower_bound': None,
+		        'upper_bound': None,
+		        'offset': 0,
+		        'fill': None,
+		        'order': None,
+		        'limit': None,
+		        'avg': True,
+		        'min': True,
+		        'max': True,
+		        'sum': False,
+		        'median': False,
+		        'mode': False,
+		        'stddev': False,
+		        'spread': False,
+		        'last_timestamp': False,
+		        'precision': 'ms',
+		        'timezone': 'Etc/UTC'
+		    })
+
+		for i, row in summarized_dimensions.iterrows():
+			self.assertEqual(row.dimension_unity_code, 1)
+
+		for i, row in summarized_dimensions.humanize().iterrows():
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_unity, '°C')
+
+
+
 class TestEdgeDeviceDimensionFromPort(unittest.TestCase):
 	"""Set of integration tests for all functions concerning the
 	EdgeDeviceDimensionFromPort instance.
