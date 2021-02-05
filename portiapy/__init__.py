@@ -1,6 +1,11 @@
-"""A small package for handling Agriness Edge's REST API.
+"""
+PortiaPy
+========
 
-Functions: about, version
+A Python stub for Agriness Edge's Portia REST API. 
+
+__authors__ = ['Lucas Góes', 'Matheus Mota']
+__emails__ = ['lucas@agrinessedge.com', 'matheus@agrinessedge.com']
 """
 
 from .version import __version__

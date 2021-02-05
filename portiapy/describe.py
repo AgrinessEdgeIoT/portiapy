@@ -1,124 +1,283 @@
-#####################################
-#              Describe             #
-#####################################
+"""Description tools to discover a device's list of ports, sensors and
+dimensions.
+"""
 
-# Libraries
-import json                       # JSON encoder and decoder
-import pandas                     # Data analysis tools for Python
+import json
+
+import pandas as pd
+
 import portiapy.utils as utils
 
-# Functions
-def about():
-    print("portiapy.describe - an Agriness Edge project")
 
-########################################
-# devicePorts
-########################################
-# /describe/device/:device/ports OR
-# /describe/device/:device/ports/last
-########################################
-def devicePorts(portiaConfig, edgeId, last=False, params={ 'from': None, 'to': None, 'precision': 'ms', 'sort': True }):
-
+def device_ports(
+    portia_config: dict,
+    edge_id: str,
+    last: bool=False,
+    params: dict={
+        'from': None,
+        'to': None,
+        'sort': True,
+        'precision': 'ms',
+        'timezone': 'Etc/UTC'
+}) -> object:
+    """Lists a device's ports.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments 
+        edge_id {str} -- Edge ID that identifies the device
+    
+    Keyword Arguments:
+        last {bool} -- if the last package of each port should be returned or
+                       not (default: {False})
+        params {dict} -- params to send to the service (default:
+                         {{ 'from', 'to', 'sort', 'precision': 'ms',
+                         'timezone': 'Etc/UTC' }})
+    
+    Returns:
+        object -- object with the list of ports
+    
+    Raises:
+        Exception -- when the request goes wrong
+    """
     if last == False:
-        endpoint = '/describe/device/{0}/ports{1}'.format( edgeId, utils.buildGetParams(params) )
+        endpoint = '/describe/device/{0}/ports'.format(edge_id)
     else:
-        endpoint = '/describe/device/{0}/ports/last{1}'.format( edgeId, utils.buildGetParams(params) )
+        endpoint = '/describe/device/{0}/ports/last'.format(edge_id)
 
-    response = utils.httpGetRequest(portiaConfig, endpoint)
+    response = utils.http_get_request(portia_config, endpoint, params)
 
     if response.status_code == 200:
 
-        d = json.loads(response.text)['ports']
-        if portiaConfig['debug']:
-            print( '[portia-debug]: {0}'.format(d) )
+        d = json.loads(response.text).get('ports')
+
+        if portia_config.get('debug'):
+            print('[portia-debug]: {0}'.format(d))
 
         if last == True:
-            d = pandas.DataFrame(d, columns=['header_timestamp', 'port', 'dimension_thing_code'])
+            d = pd.DataFrame(
+                d,
+                columns=['header_timestamp', 'port', 'dimension_thing_code']
+            )
+
+            d['port'] = d['port'].map(int)
+            d['dimension_thing_code'] = d['dimension_thing_code'].map(int)
+        else:
+            d = list(map(int, d))
+
         return d
 
     else:
-        raise Exception('couldn\'t retrieve data')
+        raise Exception("couldn't retrieve data")
 
-########################################
-# devicePortSensors
-########################################
-# /describe/device/:device/port/:port/sensors OR
-# /describe/device/:device/port/:port/sensors/last
-########################################
-def devicePortSensors(portiaConfig, edgeId, port, last=False, params={ 'from': None, 'to': None, 'precision': 'ms', 'sort': True }):
-
+def device_port_sensors(
+    portia_config: dict,
+    edge_id: str,
+    port: int,
+    last: bool=False,
+    params: dict={
+        'from': None,
+        'to': None,
+        'sort': True,
+        'precision': 'ms',
+        'timezone': 'Etc/UTC'
+}) -> object:
+    """Lists a port's sensors.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments
+        edge_id {str} -- Edge ID that identifies the device
+        port {int} -- port of the device
+    
+    Keyword Arguments:
+        last {bool} -- if the last package of each port should be returned or
+                       not (default: {False})
+        params {dict} -- params to send to the service (default:
+                         {{ 'from', 'to', 'sort', 'precision': 'ms',
+                         'timezone': 'Etc/UTC' }})
+    
+    Returns:
+        object -- object with the list of sensors
+    
+    Raises:
+        Exception -- when the request goes wrong
+    """
     if last == False:
-        endpoint = '/describe/device/{0}/port/{1}/sensors{2}'.format( edgeId, port, utils.buildGetParams(params) )
+        endpoint = '/describe/device/{0}/port/{1}/sensors' \
+                   .format(edge_id, port)
     else:
-        endpoint = '/describe/device/{0}/port/{1}/sensors/last{2}'.format( edgeId, port, utils.buildGetParams(params) )
+        endpoint = '/describe/device/{0}/port/{1}/sensors/last' \
+                   .format(edge_id, port)
 
-    response = utils.httpGetRequest(portiaConfig, endpoint)
+    response = utils.http_get_request(portia_config, endpoint, params)
 
     if response.status_code == 200:
 
-        d = json.loads(response.text)['sensors']
-        if portiaConfig['debug']:
-            print( '[portia-debug]: {0}'.format(d) )
+        d = json.loads(response.text).get('sensors')
+        if portia_config.get('debug'):
+            print('[portia-debug]: {0}'.format(d))
 
         if last == True:
-            d = pandas.DataFrame(d, columns=['header_timestamp', 'sensor', 'dimension_value', 'dimension_code', 'dimension_unity_code', 'dimension_thing_code'])
+            d = pd.DataFrame(
+                d,
+                columns=[
+                    'header_timestamp',
+                    'sensor',
+                    'dimension_value',
+                    'dimension_code',
+                    'dimension_unity_code',
+                    'dimension_thing_code'
+                ]
+            )
+
+            d['sensor'] = d['sensor'].map(int)
+            d['dimension_code'] = d['dimension_code'].map(int)
+            d['dimension_unity_code'] = d['dimension_unity_code'].map(int)
+            d['dimension_thing_code'] = d['dimension_thing_code'].map(int)
+        else:
+            d = list(map(int, d))
+
         return d
 
     else:
-        raise Exception('couldn\'t retrieve data')
+        raise Exception("couldn't retrieve data")
 
-########################################
-# devicePortDimensions
-########################################
-# /describe/device/:device/port/:port/dimensions OR
-# /describe/device/:device/port/:port/dimensions/last
-########################################
-def devicePortDimensions(portiaConfig, edgeId, port, last=False, params={ 'from': None, 'to': None, 'precision': 'ms', 'sort': True }):
-
+def device_port_dimensions(
+    portia_config: dict,
+    edge_id: str,
+    port: int,
+    last: bool=False,
+    params: dict={
+        'from': None,
+        'to': None,
+        'sort': True,
+        'precision': 'ms',
+        'timezone': 'Etc/UTC'
+}) -> object:
+    """Lists a port's dimensions.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments
+        edge_id {str} -- Edge ID that identifies the device
+        port {int} -- port of the device
+    
+    Keyword Arguments:
+        last {bool} -- if the last package of each port should be returned or
+                       not (default: {False})
+        params {dict} -- params to send to the service (default:
+                         {{ 'from', 'to', 'sort', 'precision': 'ms',
+                         'timezone': 'Etc/UTC' }})
+    
+    Returns:
+        object -- object with the list of dimensions
+    
+    Raises:
+        Exception -- when the request goes wrong
+    """
     if last == False:
-        endpoint = '/describe/device/{0}/port/{1}/dimensions{2}'.format( edgeId, port, utils.buildGetParams(params) )
+        endpoint = '/describe/device/{0}/port/{1}/dimensions' \
+                   .format(edge_id, port)
     else:
-        endpoint = '/describe/device/{0}/port/{1}/dimensions/last{2}'.format( edgeId, port, utils.buildGetParams(params) )
+        endpoint = '/describe/device/{0}/port/{1}/dimensions/last' \
+                   .format(edge_id, port)
 
-    response = utils.httpGetRequest(portiaConfig, endpoint)
+    response = utils.http_get_request(portia_config, endpoint, params)
 
     if response.status_code == 200:
 
-        d = json.loads(response.text)['dimensions']
-        if portiaConfig['debug']:
-            print( '[portia-debug]: {0}'.format(d) )
+        d = json.loads(response.text).get('dimensions')
+        if portia_config.get('debug'):
+            print('[portia-debug]: {0}'.format(d))
 
         if last == True:
-            d = pandas.DataFrame(d, columns=['header_timestamp', 'dimension_code', 'sensor', 'dimension_thing_code'])
+            d = pd.DataFrame(
+                d,
+                columns=[
+                    'header_timestamp',
+                    'dimension_code',
+                    'sensor',
+                    'dimension_thing_code'
+                ]
+            )
+
+            d['sensor'] = d['sensor'].map(int)
+            d['dimension_code'] = d['dimension_code'].map(int)
+            d['dimension_thing_code'] = d['dimension_thing_code'].map(int)
+        else:
+            d = list(map(int, d))
+
         return d
 
     else:
-        raise Exception('couldn\'t retrieve data')
+        raise Exception("couldn't retrieve data")
 
-########################################
-# devicePortSensorDimensions
-########################################
-# /describe/device/:device/port/:port/sensor/:sensor/dimensions OR
-# /describe/device/:device/port/:port/sensor/:sensor/dimensions/last
-########################################
-def devicePortSensorDimensions(portiaConfig, edgeId, port, sensor, last=False, params={ 'from': None, 'to': None, 'precision': 'ms', 'sort': True }):
-
+def device_port_sensor_dimensions(
+    portia_config: dict,
+    edge_id: str,
+    port: int,
+    sensor: int,
+    last: bool=False,
+    params: dict={
+        'from': None,
+        'to': None,
+        'sort': True,
+        'precision': 'ms',
+        'timezone': 'Etc/UTC'
+}) -> object:
+    """Lists a sensor's dimensions.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments
+        edge_id {str} -- Edge ID that identifies the device
+        port {int} -- port of the device
+        sensor {int} -- sensor of the device
+    
+    Keyword Arguments:
+        last {bool} -- if the last package of each port should be returned or
+                       not (default: {False})
+        params {dict} -- params to send to the service (default:
+                         {{ 'from', 'to', 'sort', 'precision': 'ms',
+                         'timezone': 'Etc/UTC' }})
+    
+    Returns:
+        object -- object with the list of dimensions
+    
+    Raises:
+        Exception -- when the request goes wrong
+    """
     if last == False:
-        endpoint = '/describe/device/{0}/port/{1}/sensor/{2}/dimensions{3}'.format( edgeId, port, sensor, utils.buildGetParams(params) )
+        endpoint = '/describe/device/{0}/port/{1}/sensor/{2}/dimensions' \
+                   .format(edge_id, port, sensor)
     else:
-        endpoint = '/describe/device/{0}/port/{1}/sensor/{2}/dimensions/last{3}'.format( edgeId, port, sensor, utils.buildGetParams(params) )
+        endpoint = '/describe/device/{0}/port/{1}/sensor/{2}/dimensions/last' \
+                   .format(edge_id, port, sensor)
 
-    response = utils.httpGetRequest(portiaConfig, endpoint)
+    response = utils.http_get_request(portia_config, endpoint, params)
 
     if response.status_code == 200:
 
-        d = json.loads(response.text)['dimensions']
-        if portiaConfig['debug']:
-            print( '[portia-debug]: {0}'.format(d) )
+        d = json.loads(response.text).get('dimensions')
+        if portia_config.get('debug'):
+            print('[portia-debug]: {0}'.format(d))
 
         if last == True:
-            d = pandas.DataFrame(d, columns=['header_timestamp', 'dimension_value', 'dimension_code', 'dimension_unity_code', 'dimension_thing_code'])
+            d = pd.DataFrame(
+                d,
+                columns=[
+                    'header_timestamp',
+                    'dimension_value',
+                    'dimension_code',
+                    'dimension_unity_code',
+                    'dimension_thing_code'
+                ]
+            )
+
+            d['dimension_code'] = d['dimension_code'].map(int)
+            d['dimension_unity_code'] = d['dimension_unity_code'].map(int)
+            d['dimension_thing_code'] = d['dimension_thing_code'].map(int)
+        else:
+            d = list(map(int, d))
+
         return d
 
     else:
-        raise Exception('couldn\'t retrieve data')
+        raise Exception("couldn't retrieve data")

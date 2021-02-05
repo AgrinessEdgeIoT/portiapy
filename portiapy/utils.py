@@ -1,346 +1,29 @@
-#####################################
-#              Commons              #
-#####################################
+"""Utility constants, methods and classes used by all modules.
+"""
 
-# Libraries
-from datetime import date, datetime, timedelta, timezone  # Basic date and time types
-import copy  # Shallow and deep copy operations
-import json  # JSON encoder and decoder
-import time  # Time access and conversions
+import json
+import time
+from io import StringIO
 
-
-# Functions
-def about():
-    print('portiapy.utils - an Agriness Edge project')
-
-
-#####################################
-#        REST API Management        #
-#####################################
-
-import requests  # Simple HTTP library
-
-
-def httpGetRequest(portiaConfig, endpoint, headers=None):
-    h = {'Authorization': 'Bearer {0}'.format(portiaConfig['authorization'])}
-    if headers is not None:
-        h = {**h, **headers}  # Takes the arguments and turn them into a dictionary
-
-    url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
-
-    start = time.time()
-    response = requests.get(url, headers=h)
-    end = time.time()
-    elapsed = end - start
-
-    if portiaConfig['debug'] == True:
-        print('[portia-debug]: status: {0} | {1:.4f} sec. | {2}'.format(response.status_code, elapsed, url))
-
-    return response
-
-
-def httpPostRequest(portiaConfig, endpoint, payload, headers=None):
-    h = {'Authorization': 'Bearer {0}'.format(portiaConfig['authorization'])}
-    if headers is not None:
-        h = {**h, **headers}  # Takes the arguments and turn them into a dictionary
-
-    url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
-
-    start = time.time()
-    response = requests.post(url, headers=h, json=payload)
-    end = time.time()
-    elapsed = end - start
-
-    if portiaConfig['debug'] == True:
-        print('[portia-debug]: status: {0} | {1:.4f} sec. | {2}'.format(response.status_code, elapsed, url))
-
-    return response
-
-
-def httpPutRequest(portiaConfig, endpoint, payload, headers=None):
-    h = {'Authorization': 'Bearer {0}'.format(portiaConfig['authorization'])}
-    if headers is not None:
-        h = {**h, **headers}  # Takes the arguments and turn them into a dictionary
-
-    url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
-
-    start = time.time()
-    response = requests.put(url, headers=h, json=payload)
-    end = time.time()
-    elapsed = end - start
-
-    if portiaConfig['debug'] == True:
-        print('[portia-debug]: status: {0} | {1:.4f} sec. | {2}'.format(response.status_code, elapsed, url))
-
-    return response
-
-
-def httpDeleteRequest(portiaConfig, endpoint, headers=None):
-    h = {'Authorization': 'Bearer {0}'.format(portiaConfig['authorization'])}
-    if headers is not None:
-        h = {**h, **headers}  # Takes the arguments and turn them into a dictionary
-
-    url = '{0}{1}'.format(portiaConfig['baseurl'], endpoint)
-
-    start = time.time()
-    response = requests.delete(url, headers=h)
-    end = time.time()
-    elapsed = end - start
-
-    if portiaConfig['debug'] == True:
-        print('[portia-debug]: status: {0} | {1:.4f} sec. | {2}'.format(response.status_code, elapsed, url))
-
-    return response
-
-
-def buildGetParams(params):
-    getParams = ''
-    hasParams = False
-
-    for key, value in params.items():
-        if value is not None:
-            if hasParams == True:
-                getParams += '&'
-            else:
-                getParams += '?'
-                hasParams = True
-
-            # Standardizing values
-            if isinstance(value, bool) and value == True:
-                value = 'true'
-            elif isinstance(value, bool) and value == False:
-                value = 'false'
-
-            getParams += '{0}={1}'.format(key, value)
-
-    return getParams
-
-
-#####################################
-#            Plotting               #
-#####################################
-
-from dateutil import tz  # Powerful extensions to datetime
-import pandas  # Data analysis tools for Python
-import plotly.graph_objs as plotlygo  # Modern visualization for the data era
+import arrow
+import requests
+import pandas as pd
+from dateutil import tz
 import plotly.offline as plotly
-import pytz  # World timezone definitions for Python
+import plotly.graph_objs as plotlygo
 
 
-def plotSelectionsFromDataframes(dataFrames, timezone='Etc/GMT-3'):
-    lines = []
-
-    for i, dataFrame in enumerate(dataFrames):
-        dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(timezone)
-        lines.append(plotlygo.Scatter(y=dataFrame.dimension_value, x=dataFrame.header_timestamp, mode='lines+markers',
-                                      name="Sensor {0}".format(i)))
-
-    data = plotlygo.Data(lines)
-    layout = plotlygo.Layout(width=1100, height=650)
-    plotly.iplot(plotlygo.Figure(data=data, layout=layout))
-
-
-def plotSummariesFromDataframes(dataFrames, timezone='Etc/GMT-3'):
-    lines = []
-
-    for dataFrame in dataFrames:
-        dataFrame['header_timestamp'] = pandas.to_datetime(dataFrame['header_timestamp'], unit='ms').dt.tz_localize(
-            timezone)
-
-        #         timeAxis = []
-        #         for i, line in enumerate(dataFrame['header_timestamp']):
-        #             timeAxis.append( dataFrame['header_timestamp'][i] )
-
-        lines.append(plotlygo.Bar(y=dataFrame['number_of_packages'], x=dataFrame.header_timestamp, name="Packages", opacity=0.1))
-
-        if 'max' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['max'], x=dataFrame.header_timestamp, mode='lines+markers', name="Max", yaxis='y2'))
-
-        if 'avg' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['avg'], x=dataFrame.header_timestamp, mode='lines+markers', name="Avg", yaxis='y2'))
-
-        if 'min' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['min'], x=dataFrame.header_timestamp, mode='lines+markers', name="Min", yaxis='y2'))
-
-        if 'median' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['median'], x=dataFrame.header_timestamp, mode='lines+markers', name="Median", yaxis='y2'))
-
-        if 'mode' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['mode'], x=dataFrame.header_timestamp, mode='lines+markers', name="Mode", yaxis='y2'))
-
-        if 'sum' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['sum'], x=dataFrame.header_timestamp, mode='lines+markers', name="Sum", yaxis='y2',
-                                          visible='legendonly'))
-
-        if 'stddev' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['stddev'], x=dataFrame.header_timestamp, mode='lines+markers', name="Stddev", yaxis='y2',
-                                          visible='legendonly'))
-
-        if 'spread' in dataFrame.columns:
-            lines.append(plotlygo.Scatter(y=dataFrame['spread'], x=dataFrame.header_timestamp, mode='lines+markers', name="Spread", yaxis='y2',
-                                          visible='legendonly'))
-
-    data = plotlygo.Data(lines)
-    layout = plotlygo.Layout(width=1100, height=650, yaxis=dict(title='Number of Packages', side='right'),
-                             yaxis2=dict(title='Dimension Value', overlaying='y', side='left'))
-    plotly.iplot(plotlygo.Figure(data=data, layout=layout))
-
-
-#####################################
-#            Widget Utils           #
-#####################################
-
-import arrow  # Better dates and times for Python
-
-
-def mapDevicePortsToDropdownWidget(edgeid):
-    portMapping = {}
-
-    response = httpGetRequest('/describe/device/{0}/ports/last?precision=ms'.format(edgeid))
-
-    if response.status_code == 200:
-        d = json.loads(response.text)
-        for port in d['ports']:
-            label = "{0:3} | {1:25} ({2})".format(
-                port['port'],
-                translateThingCode(port["dimension_thing_code"]),
-                arrow.get(port["header_timestamp"] / 1000, tzinfo=tz.gettz('America/Sao_Paulo')).humanize()
-            )
-
-            portMapping[label] = port['port']
-        return portMapping
-
-    else:
-        raise Exception('Couldn\'t retrieve data')
-
-
-def mapDevicePortSensorsToDropdownWidget(edgeid, port):
-    sensorMapping = {}
-
-    response = httpGetRequest('/describe/device/{0}/port/{1}/sensors/last?precision=ms'.format(edgeid, port))
-
-    if response.status_code == 200:
-        d = json.loads(response.text)
-        for sensor in d['sensors']:
-            label = "{0:3} | {1:25} | {2:6}{3:15} ({4})".format(
-                sensor['sensor'],
-                translateDimensionCode(sensor["dimension_code"]),
-                sensor["dimension_value"],
-                translateUnityCode(sensor["dimension_unity_code"]),
-                arrow.get(sensor["header_timestamp"] / 1000, tzinfo=tz.gettz('America/Sao_Paulo')).humanize()
-            )
-
-            sensorMapping[label] = sensor['sensor']
-        return sensorMapping
-
-    else:
-        raise Exception('Couldn\'t retrieve data')
-
-
-def mapDevicePortSensorDimensionsToDropdownWidget(edgeid, port, sensor):
-    dimensionMapping = {}
-
-    response = httpGetRequest(
-        '/describe/device/{0}/port/{1}/sensor/{2}/dimensions/last?precision=ms'.format(edgeid, port, sensor))
-
-    if response.status_code == 200:
-        d = json.loads(response.text)
-        for dimension in d['dimensions']:
-            label = "{0:3} | {1:25} | {2:6}{3:15} ({4})".format(
-                dimension['dimension_code'],
-                translateDimensionCode(dimension["dimension_code"]),
-                dimension["dimension_value"],
-                translateUnityCode(dimension["dimension_unity_code"]),
-                arrow.get(dimension["header_timestamp"] / 1000, tzinfo=tz.gettz('America/Sao_Paulo')).humanize()
-            )
-
-            dimensionMapping[label] = dimension['dimension_code']
-        return dimensionMapping
-
-    else:
-        raise Exception('Couldn\'t retrieve data')
-
-
-#####################################
-#         Portia Labeling           #
-#####################################
-
-from enum import Enum
-
-
-default_unity_codes = {
-    'en-us': {
-        0:  ' unit(s)',
-        1:  '°C',
-        2:  '%',
-        3:  'ppm',
-        4:  'L',
-        5:  'g',
-        6:  's',
-        7:  'L/min',
-        8:  'dBm',
-        9:  'B',
-        10: '',
-        11: '',
-        12: 'ms',
-        13: 'V',
-        14: 'Pa',
-        15: 'kg',
-        16: ' day(s)',
-        17: 'mV',
-        18: 'gal',
-        19: '°F',
-        20: 'mL',
-        21: 'lx',
-        22: 'm/s',
-        23: 't',
-        24: 'lb',
-        25: 'min',
-        26: '°'
-    },
-    'pt-br': {
-        0:  ' unidade(s)',
-        1:  '°C',
-        2:  '%',
-        3:  'ppm',
-        4:  'L',
-        5:  'g',
-        6:  's',
-        7:  'L/min',
-        8:  'dBm',
-        9:  'B',
-        10: '',
-        11: '',
-        12: 'ms',
-        13: 'V',
-        14: 'Pa',
-        15: 'kg',
-        16: ' dia(s)',
-        17: 'mV',
-        18: 'gal',
-        19: '°F',
-        20: 'mL',
-        21: 'lx',
-        22: 'm/s',
-        23: 't',
-        24: 'lb',
-        25: 'min',
-        26: '°'
-    }
-}
-
-
-default_thing_codes = {
-    0: 'NotSpecified',
-    1: 'Sensor_Agriness_TU',
-    2: 'Sensor_Agriness_AirQ',
-    3: 'Collector_Agriness_Hydro_v1',
-    4: 'Sensor_Agriness_AnimalScale',
-    5: 'Collector_Agriness_CycleCounter_v1',
-    6: 'Collector_Inobram_Smaai_v5',
-    7: 'Sensor_Agriness_HydroEDN15-100',
-    8: 'Sensor_Agriness_HydroQMS',
-    9: 'Sensor_Agriness_HydroTemp',
+THING_CODES = {
+    0:  'NotSpecified',
+    1:  'Sensor_Agriness_TU',
+    2:  'Sensor_Agriness_AirQ',
+    3:  'Collector_Agriness_Hydro_v1',
+    4:  'Sensor_Agriness_AnimalScale',
+    5:  'Collector_Agriness_CycleCounter_v1',
+    6:  'Collector_Inobram_Smaai_v5',
+    7:  'Sensor_Agriness_HydroEDN15-100',
+    8:  'Sensor_Agriness_HydroQMS',
+    9:  'Sensor_Agriness_HydroTemp',
     10: 'T4_Agriness_v0',
     11: 'Collector_Agriness_Universal_v1',
     12: 'Collector_Inobram_Smaai_v3',
@@ -400,11 +83,27 @@ default_thing_codes = {
     66: 'Sensor_AgNet_T4',
     67: 'Sensor_AgNet_T5',
     68: 'Sensor_Inobram_T_H2O',
-    69: 'Collector_Inobram_Ambientte_v3'
+    69: 'Collector_Inobram_Ambientte_v3',
+    70: 'Sensor_Roboagro_Stock',
+    71: 'Sensor_Roboagro_Consumption',
+    72: 'Sensor_Roboagro_Animal_Counter',
+    73: 'Sensor_Roboagro_Bay_Consumption',
+    74: 'Sensor_Roboagro_Bay_Animal_Counter',
+    75: 'Collector_Roboagro_v2',
+    76: 'Collector_IonTec_v1',
+    77: 'Sensor_IonTec_T',
+    78: 'Sensor_IonTec_U',
+    79: 'Sensor_IonTec_CO2',
+    80: 'Sensor_IonTec_NH3',
+    81: 'Sensor_IonTec_Feeder',
+    82: 'Sensor_IonTec_ESF',
+    83: 'Sensor_IonTec_Water_Level_Meter',
+    84: 'Sensor_IonTec_Environment_Meter',
+    85: 'Sensor_IonTec_Feed_Bin_Meter',
+    86: 'Sensor_MSD_IDAL_Twin_v3'
 }
 
-
-default_dimension_codes = {
+DIMENSION_CODES = {
     'en-us': {
         0:  'Generic Dimension',
         1:  'Point Temperature',
@@ -477,203 +176,842 @@ default_dimension_codes = {
     }
 }
 
+EVENT_CODES = {
+    'en-us': {
+        0:  'Generic Event',
+        1:  'Communication State'
+    },
+    'pt-br': {
+        0:  'Evento Genérico',
+        1:  'Estado de Comunicação'
+    }
+}
 
-def humanize(df, datetime=False, locale='en-us', custom_unity_codes=None,
-             custom_dimension_codes=None):
-    """Humanizes a data frame's content by translating its columns data to
+UNITY_CODES = {
+    'en-us': {
+        0:  ' unit(s)',
+        1:  '°C',
+        2:  '%',
+        3:  'ppm',
+        4:  'L',
+        5:  'g',
+        6:  's',
+        7:  'L/min',
+        8:  'dBm',
+        9:  'B',
+        10: '',
+        11: '',
+        12: 'ms',
+        13: 'V',
+        14: 'Pa',
+        15: 'kg',
+        16: ' day(s)',
+        17: 'mV',
+        18: 'gal',
+        19: '°F',
+        20: 'mL',
+        21: 'lx',
+        22: 'm/s',
+        23: 't',
+        24: 'lb',
+        25: 'min',
+        26: '°'
+    },
+    'pt-br': {
+        0:  ' unidade(s)',
+        1:  '°C',
+        2:  '%',
+        3:  'ppm',
+        4:  'L',
+        5:  'g',
+        6:  's',
+        7:  'L/min',
+        8:  'dBm',
+        9:  'B',
+        10: '',
+        11: '',
+        12: 'ms',
+        13: 'V',
+        14: 'Pa',
+        15: 'kg',
+        16: ' dia(s)',
+        17: 'mV',
+        18: 'gal',
+        19: '°F',
+        20: 'mL',
+        21: 'lx',
+        22: 'm/s',
+        23: 't',
+        24: 'lb',
+        25: 'min',
+        26: '°'
+    }
+}
+
+
+def humanize_thing_code(thing_code: int) -> str:
+    """Translates a thing code into a humanized version of it.
+    
+    Arguments:
+        thing_code {int} -- thing code to be humanized
+    
+    Returns:
+        str -- humanized thing code
+    """
+    translated_thing_code = THING_CODES.get(int(thing_code))
+
+    if translated_thing_code is None:
+        return 'Thing Code {}'.format(thing_code)
+    else:
+        return translated_thing_code
+
+def humanize_dimension_code(
+    dimension_code: int, locale: str='en-us', custom: list=None
+) -> str:
+    """Translates a dimension code into a humanized version of it.
+    
+    Arguments:
+        dimension_code {int} -- dimension code to be humanized
+    
+    Keyword Arguments:
+        locale {str} -- which language to use when humanizing
+                        (default: {'en-us'})
+        custom {list} -- custom list of dimension codes (default: {None})
+    
+    Returns:
+        str -- humanized dimension code
+    """
+    try:
+        if custom is None:
+            translated_dimension_code = DIMENSION_CODES.get(locale) \
+                .get(int(dimension_code))
+        else:
+            translated_dimension_code = custom.get(locale) \
+                .get(int(dimension_code))
+    except:
+        return 'Dimension Code {}'.format(dimension_code)
+    else:
+        return translated_dimension_code
+
+def humanize_event_code(
+    event_code: int, locale: str='en-us', custom: list=None
+) -> str:
+    """Translates an event code into a humanized version of it.
+    
+    Arguments:
+        event_code {int} -- event code to be humanized
+    
+    Keyword Arguments:
+        locale {str} -- which language to use when humanizing
+                        (default: {'en-us'})
+        custom {list} -- custom list of event codes (default: {None})
+    
+    Returns:
+        str -- humanized event code
+    """
+    try:
+        if custom is None:
+            translated_event_code = EVENT_CODES.get(locale) \
+                .get(int(event_code))
+        else:
+            translated_event_code = custom.get(locale) \
+                .get(int(event_code))
+    except:
+        return 'Event Code {}'.format(event_code)
+    else:
+        return translated_event_code
+
+def humanize_unity_code(
+    unity_code: int, locale: str='en-us', custom: list=None
+) -> str:
+    """Translates a unity code into a humanized version of it.
+    
+    Arguments:
+        unity_code {int} -- unity code to be humanized
+    
+    Keyword Arguments:
+        locale {str} -- which language to use when humanizing
+                        (default: {'en-us'})
+        custom {list} -- custom list of unity codes (default: {None})
+    
+    Returns:
+        str -- humanized unity code
+    """
+    try:
+        if custom is None:
+            translated_unity_code = UNITY_CODES.get(locale) \
+                .get(int(unity_code))
+        else:
+            translated_unity_code = custom.get(locale) \
+                .get(int(unity_code))
+    except:
+        return 'Unity Code {}'.format(unity_code)
+    else:
+        return translated_unity_code
+
+def humanize_dataframe(
+    dataframe: 'pd.DataFrame',
+    locale: str='en-us',
+    custom_dimension: list=None,
+    custom_event: list=None,
+    custom_unity: list=None
+) -> 'pd.DataFrame':
+    """Humanizes a data frame's dimensions by translating its columns data to
     actual text.
 
-    Parameters
-    ----------
-    df -- the data frame to be humanized
-    datetime -- if the header_timestamp column should be humanized too
-    (default False)
-    locale -- which language to use when humanizing (default 'en-us')
-    custom_unity_codes -- a dictionary with custom unity codes to use when
-    translating (default None)
-    custom_dimension_codes -- a dictionary with custom dimension codes to use
-    when translating (default None)
+    Arguments:
+        dataframe {pd.DataFrame} -- data frame to be humanized
+    
+    Keyword Arguments:
+        locale {str} -- which language to use when humanizing
+                        (default {'en-us'})
+        custom_dimension {dict} -- custom list of dimension codes
+                                   (default {None})
+        custom_event {dict} -- custom list of event codes (default {None})
+        custom_unity {dict} -- custom list of unity codes (default {None})
+
+    Returns:
+        pd.DataFrame -- humanized data frame
     """
-
-    for index, row in df.iterrows():
-
-        if datetime == True:
-            datetime_locale = locale.replace('-', '_')
-            if datetime_locale == 'pt-br':
-                datetime_locale = 'pt'
-
-            df['header_timestamp'] = df['header_timestamp'].astype(str)
-
-            df.at[index, 'header_timestamp'] = arrow.get(
-                int(row['header_timestamp']) / 1000,
-                tzinfo=tz.gettz('America/Sao_Paulo')
-            ).humanize(locale=datetime_locale)
-
-        if 'dimension_code' in df.columns:
-            df['dimension_code'] = df['dimension_code'].astype(str)
-            df.at[index, 'dimension_code'] = translateDimensionCode(
-                row['dimension_code'], locale, custom_dimension_codes)
-
-        if 'dimension_unity_code' in df.columns:
-            df['dimension_unity_code'] = df['dimension_unity_code'].astype(str)
-            df.at[index, 'dimension_unity_code'] = translateUnityCode(
-                row['dimension_unity_code'], locale, custom_unity_codes)
-
-        if 'dimension_thing_code' in df.columns:
-            df['dimension_thing_code'] = df['dimension_thing_code'].astype(str)
-            df.at[index, 'dimension_thing_code'] = translateThingCode(
-                row['dimension_thing_code'])
-
-    if datetime == True:
-        df.rename(columns={'header_timestamp': 'header_datetime'},
-                  inplace=True)
-    if 'dimension_code' in df.columns:
-        df.rename(columns={'dimension_code': 'dimension'},
-                  inplace=True)
-    if 'dimension_unity_code' in df.columns:
-        df.rename(columns={'dimension_unity_code': 'dimension_unity'},
-                  inplace=True)
-    if 'dimension_thing_code' in df.columns:
-        df.rename(columns={'dimension_thing_code': 'dimension_thing'},
-                  inplace=True)
-
-    return df
+    if 'dimension_thing_code' in dataframe.columns:
+        dataframe['dimension_thing'] = dataframe['dimension_thing_code'].map(
+            lambda thing_code: humanize_thing_code(int(thing_code))
+        )
 
 
-def humanizeJson(json_, datetime=False, locale='en-us',
-                 custom_unity_codes=None, custom_dimension_codes=None):
-    """Humanizes a JSON object's content by translating its data to actual
+    if 'dimension_unity_code' in dataframe.columns:
+        dataframe['dimension_unity'] = dataframe['dimension_unity_code'].map(
+            lambda unity_code: humanize_unity_code(
+                unity_code=int(unity_code),
+                locale=locale,
+                custom=custom_unity
+            )
+        )
+
+    if 'dimension_code' in dataframe.columns:
+        dataframe['dimension'] = dataframe['dimension_code'].map(
+            lambda dimension_code: humanize_dimension_code(
+                dimension_code=int(dimension_code),
+                locale=locale,
+                custom=custom_dimension
+            )
+        )
+
+    if 'event_code' in dataframe.columns:
+        dataframe['event'] = dataframe['event_code'].map(
+            lambda event_code: humanize_event_code(
+                event_code=int(event_code),
+                locale=locale,
+                custom=custom_event
+            )
+        )
+
+    return dataframe
+
+def humanize_json(
+    json_: dict,
+    locale: str='en-us',
+    custom_dimension: list=None,
+    custom_unity: list=None
+) -> dict:
+    """Humanizes a json's dimensions by translating its columns data to actual
     text.
 
-    Parameters
-    ----------
-    json_ -- the JSON object to be humanized
-    datetime -- if the header_timestamp column should be humanized too
-    (default False)
-    locale -- which language to use when humanizing (default 'en-us')
-    custom_unity_codes -- a dictionary with custom unity codes to use when
-    translating (default None)
-    custom_dimension_codes -- a dictionary with custom dimension codes to use
-    when translating (default None)
-    """
+    Arguments:
+        json_ {dict} -- json to be humanized
     
-    json_['thing_code'] = translateThingCode(json_['thing_code'])
+    Keyword Arguments:
+        locale {str} -- which language to use when humanizing
+                        (default {'en-us'})
+        custom_dimension {dict} -- custom list of dimension codes
+                                   (default {None})
+        custom_unity {dict} -- custom list of unity codes (default {None})
 
-    for port in json_['ports']:
-        port['thing_code'] = translateThingCode(port['thing_code'])
+    Returns:
+        dict -- humanized dictionary
+    """
+    json_['channel'] = humanize_thing_code(json_['channel_code'])
+    json_['thing'] = humanize_thing_code(json_['thing_code'])
 
-        for sensor in port['sensors']:
+    for port in json_.get('ports'):
+        port['thing'] = humanize_thing_code(port['thing_code'])
 
-            if datetime == True:
-                datetime_locale = locale.replace('-', '_')
-                if datetime_locale == 'pt-br':
-                    datetime_locale = 'pt'
+        for sensor in port.get('sensors'):
+            last_package = sensor.get('last_package')
 
-                sensor['last_package']['header_datetime'] = arrow.get(
-                    sensor['last_package']['header_timestamp'] / 1000,
-                    tzinfo=tz.gettz('America/Sao_Paulo')
-                ).humanize(locale=datetime_locale)
-                del sensor['last_package']['header_timestamp']
+            last_package['dimension'] = humanize_dimension_code(
+                dimension_code=last_package.get('dimension_code'),
+                locale=locale,
+                custom=custom_dimension
+            )
 
-            sensor['last_package']['dimension'] = translateDimensionCode(
-                sensor['last_package']['dimension_code'], locale,
-                custom_dimension_codes)
-            sensor['last_package']['dimension_unity'] = translateUnityCode(
-                sensor['last_package']['dimension_unity_code'], locale,
-                custom_unity_codes)
-            sensor['last_package']['dimension_thing'] = translateThingCode(
-                sensor['last_package']['dimension_thing_code'])
+            last_package['dimension_unity'] = humanize_unity_code(
+                unity_code=last_package.get('dimension_unity_code'),
+                locale=locale,
+                custom=custom_unity
+            )
 
-            del sensor['last_package']['dimension_code']
-            del sensor['last_package']['dimension_unity_code']
-            del sensor['last_package']['dimension_thing_code']
+            last_package['dimension_thing'] = humanize_thing_code(
+                last_package.get('dimension_thing_code')
+            )
 
     return json_
 
 
-def translateUnityCode(unity_code, locale='en-us', custom_unity_codes=None):
+def http_get_request(
+    portia_config: dict,
+    endpoint: str,
+    params: dict=None,
+    optional_headers: dict=None
+) -> object:
+    """Makes an HTTP GET request.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments
+        endpoint {str} -- endpoint to make the request to
+    
+    Keyword Arguments:
+        params {dict} -- params to send to the service (default: {None})
+        optional_headers {dict} -- dictionary with other headers
+                                   (default: {None})
 
-    if custom_unity_codes is None:
-        if default_unity_codes.get(locale) is None or \
-           default_unity_codes.get(locale).get(unity_code) is None:
-            return 'Unity Code {}'.format(unity_code)
-        else:
-            return default_unity_codes.get(locale).get(unity_code)
-    else:
-        if not isinstance(custom_unity_codes, dict) or \
-           custom_unity_codes.get(locale) is None or \
-           not isinstance(custom_unity_codes.get(locale), dict) or \
-           custom_unity_codes.get(locale).get(unity_code) is None:
-            return 'Unity Code {}'.format(unity_code)
-        else:
-            return custom_unity_codes.get(locale).get(unity_code)
+    Returns:
+        object -- response object
+    """
+    headers = {
+        'Authorization': 'Bearer {0}' \
+        .format(portia_config.get('authorization'))
+    }
+
+    if optional_headers is not None:
+        headers = {**headers, **optional_headers}
+
+    start = time.time()
+    response = requests.get(
+        '{0}{1}'.format(portia_config.get('baseurl'), endpoint),
+        headers=headers,
+        params=params
+    )
+    end = time.time()
+
+    if portia_config.get('debug') == True:
+        print(
+            '[portia-debug]: status: {0} | {1:.4f} sec. | {2}' \
+            .format(response.status_code, end - start, response.url)
+        )
+
+    return response
+
+def http_post_request(
+    portia_config: dict,
+    endpoint: str,
+    payload: dict,
+    params: dict=None,
+    optional_headers: dict=None
+) -> object:
+    """Makes an HTTP POST request.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments 
+        endpoint {str} -- endpoint to make the request to
+        payload {dict} -- payload to send to the service
+    
+    Keyword Arguments:
+        params {dict} -- params to send to the service (default: {None})
+        optional_headers {dict} -- dictionary with other headers
+                                   (default: {None})
+
+    Returns:
+        object -- response object
+    """
+    headers = {
+        'Authorization': 'Bearer {0}' \
+        .format(portia_config.get('authorization'))
+    }
+
+    if optional_headers is not None:
+        headers = {**headers, **optional_headers}
+
+    start = time.time()
+    response = requests.post(
+        '{0}{1}'.format(portia_config.get('baseurl'), endpoint),
+        headers=headers,
+        params=params,
+        json=payload
+    )
+    end = time.time()
+
+    if portia_config.get('debug') == True:
+        print(
+            '[portia-debug]: status: {0} | {1:.4f} sec. | {2}' \
+            .format(response.status_code, end - start, response.url)
+        )
+
+    return response
+
+def http_put_request(
+    portia_config: dict,
+    endpoint: str,
+    payload: dict,
+    params: dict=None,
+    optional_headers: dict=None
+)  -> object:
+    """Makes an HTTP PUT request.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments 
+        endpoint {str} -- endpoint to make the request to
+        payload {dict} -- payload to send to the service
+    
+    Keyword Arguments:
+        params {dict} -- params to send to the service (default: {None})
+        optional_headers {dict} -- dictionary with other headers
+                                   (default: {None})
+
+    Returns:
+        object -- response object
+    """
+    headers = {
+        'Authorization': 'Bearer {0}' \
+        .format(portia_config.get('authorization'))
+    }
+
+    if optional_headers is not None:
+        headers = {**headers, **optional_headers}
+
+    start = time.time()
+    response = requests.put(
+        '{0}{1}'.format(portia_config.get('baseurl'), endpoint),
+        headers=headers,
+        params=params,
+        json=payload
+    )
+    end = time.time()
+
+    if portia_config.get('debug') == True:
+        print(
+            '[portia-debug]: status: {0} | {1:.4f} sec. | {2}' \
+            .format(response.status_code, end - start, response.url)
+        )
+
+    return response
+
+def http_delete_request(
+    portia_config: dict,
+    endpoint: str,
+    payload: dict=None,
+    params: dict=None,
+    optional_headers: dict=None
+) -> object:
+    """Makes an HTTP DELETE request.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments 
+        endpoint {str} -- endpoint to make the request to
+    
+    Keyword Arguments:
+        payload {dict} -- payload to send to the service (default: {None})
+        params {dict} -- params to send to the service (default: {None})
+        optional_headers {dict} -- dictionary with other headers
+                                   (default: {None})
+
+    Returns:
+        object -- response object
+    """
+    headers = {
+        'Authorization': 'Bearer {0}' \
+        .format(portia_config.get('authorization'))
+    }
+
+    if optional_headers is not None:
+        headers = {**headers, **optional_headers}
+
+    start = time.time()
+    response = requests.delete(
+        '{0}{1}'.format(portia_config.get('baseurl'), endpoint),
+        headers=headers,
+        params=params,
+        json=payload
+    )
+    end = time.time()
+
+    if portia_config.get('debug') == True:
+        print(
+            '[portia-debug]: status: {0} | {1:.4f} sec. | {2}' \
+            .format(response.status_code, end - start, response.url.encode('utf8'))
+        )
+
+    return response
 
 
-def translateThingCode(thing_code):
-
-    if default_thing_codes.get(thing_code) is None:
-        return 'Thing Code {}'.format(thing_code)
-    else:
-        return default_thing_codes.get(thing_code)
-
-
-def translateDimensionCode(dimension_code, locale='en-us',
-                           custom_dimension_codes=None):
-
-    dimension_code = int(dimension_code)
-
-    if custom_dimension_codes is None:
-        if default_dimension_codes.get(locale) is None or \
-           default_dimension_codes.get(locale).get(dimension_code) is None:
-            return 'Dimension Code {}'.format(dimension_code)
-        else:
-            return default_dimension_codes.get(locale).get(dimension_code)
-    else:
-        if not isinstance(custom_dimension_codes, dict) or \
-           custom_dimension_codes.get(locale) is None or \
-           not isinstance(custom_dimension_codes.get(locale), dict) or \
-           custom_dimension_codes.get(locale).get(dimension_code) is None:
-            return 'Dimension Code {}'.format(dimension_code)
-        else:
-            return custom_dimension_codes.get(locale).get(dimension_code)
-
-
-#####################################
-#         Converter Types           #
-#####################################
-
-from io import StringIO  # Read and write strings as files
-import pandas  # Data analysis tools for Python
-import json
-
-
-def convert_csv(response, portiaConfig):
+def convert_csv(portia_config: dict, response: object) -> 'pd.DataFrame':
+    """Converts a CSV text file to a data frame.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments 
+        response {object} -- HTTP response object
+    
+    Returns:
+        pd.DataFrame -- converted dataframe
+    
+    Raises:
+        Exception -- when the conversion goes wrong
+    """
     if response.status_code == 200:
+
         try:
-            dimensionSeries = pandas.read_csv(StringIO(response.text), sep=';')
-            if portiaConfig['debug']:
-                print('[portia-debug]: {0} rows'.format(len(dimensionSeries.index)))
 
-            return dimensionSeries
+            dataframe = pd.read_csv(StringIO(response.text), sep=';')
+
+            if 'port' in dataframe.columns:
+                dataframe['port'] = dataframe['port'].map(int)
+
+            if 'sensor' in dataframe.columns:
+                dataframe['sensor'] = dataframe['sensor'].map(int)
+
+            if 'event_code' in dataframe.columns:
+                dataframe['event_code'] = dataframe['event_code'].map(int)
+
+            if 'dimension_code' in dataframe.columns:
+                dataframe['dimension_code'] = dataframe['dimension_code'] \
+                    .map(int)
+
+            if 'dimension_thing_code' in dataframe.columns:
+                dataframe['dimension_thing_code'] = dataframe \
+                    ['dimension_thing_code'].map(int)
+
+            if 'dimension_unity_code' in dataframe.columns:
+                dataframe['dimension_unity_code'] = dataframe \
+                    ['dimension_unity_code'].map(int)
+
+            if portia_config.get('debug'):
+                print('[portia-debug]: {0} rows'.format(len(dataframe.index)))
+
+            return dataframe
+
         except Exception as err:
-            raise Exception('couldn\'t create pandas data frame: {0}'.format(err))
+            raise Exception('couldn\'t create data frame: {0}'.format(err))
+
     else:
-        raise Exception('couldn\'t retrieve data')
+        raise Exception("couldn't retrieve data")
 
-
-def convert_json(response, portiaConfig):
+def convert_json(portia_config: dict, response: object) -> dict:
+    """Converts a JSON text file to a data frame.
+    
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments 
+        response {object} -- HTTP response object
+    
+    Returns:
+        dict -- converted dictionary
+    
+    Raises:
+        Exception -- when the conversion goes wrong
+    """
     if response.status_code == 200:
-        dimensionSeries = json.loads(response.text)
-        if portiaConfig['debug']:
-            print('[portia-debug]: {0}'.format(dimensionSeries))
 
-        return dimensionSeries
+        json_ = json.loads(response.text)
+        if portia_config['debug']:
+            print('[portia-debug]: {0}'.format(json_))
+
+        return json_
+
     else:
         err = json.loads(response.text)
-        raise Exception('couldn\'t retrieve data: {0}'.format(err['message']))
+        raise Exception(
+            "couldn't retrieve data: {0}".format(err.get('message'))
+        )
+
+def convert(type_: str, portia_config: dict, response: object) -> object:
+    """Converts an HTTP response.
+    
+    Arguments:
+        type_ {str} -- type of response
+        portia_config {dict} -- Portia's configuration arguments 
+        response {object} -- HTTP response object
+    
+    Returns:
+        object -- converted response
+    """
+    if type_ == 'text/csv':
+        return convert_csv(portia_config, response)
+    elif type_ == 'application/json':
+        return convert_json(portia_config, response)
 
 
-response_convert = {
-    'text/csv': convert_csv,
-    'application/json': convert_json
-}
+def plot_selection_from_dataframes(
+    dataframes: list, timezone: str='Etc/GMT-3'
+):
+    """Uses Plotly to plot a chart from a set of dataframes.
+    
+    Arguments:
+        dataframes {list} -- list of dataframes
+    
+    Keyword Arguments:
+        timezone {str} -- timezone to convert the timestamp to
+                          (default: {'Etc/GMT-3'})
+    """
+    lines = []
+
+    for i, dataframe in enumerate(dataframes):
+
+        dataframe['header_timestamp'] = pd.to_datetime(
+            dataframe['header_timestamp'],
+            unit='ms'
+        ).dt.tz_localize(timezone)
+
+        lines.append(plotlygo.Scatter(
+            y=dataframe.dimension_value,
+            x=dataframe.header_timestamp,
+            mode='lines+markers',
+            name="Sensor {0}".format(i)
+        ))
+
+    data = plotlygo.Data(lines)
+    layout = plotlygo.Layout(width=1100, height=650)
+    plotly.iplot(plotlygo.Figure(data=data, layout=layout))
+
+def plot_summary_from_dataframes(
+    dataframes: list, timezone: str='Etc/GMT-3'
+):
+    """Uses Plotly to plot a chart from a set of dataframes.
+    
+    Arguments:
+        dataframes {list} -- list of dataframes
+    
+    Keyword Arguments:
+        timezone {str} -- timezone to convert the timestamp to
+                          (default: {'Etc/GMT-3'})
+    """
+    lines = []
+
+    for dataframe in dataframes:
+        dataframe['header_timestamp'] = pd.to_datetime(
+            dataframe['header_timestamp'],
+            unit='ms'
+        ).dt.tz_localize(timezone)
+
+        lines.append(plotlygo.Bar(
+            y=dataframe['number_of_packages'],
+            x=dataframe.header_timestamp,
+            name="Packages",
+            opacity=0.1
+        ))
+
+        if 'max' in dataframe.columns:
+            lines.append(plotlygo.Scatter(
+                y=dataframe['max'],
+                x=dataframe.header_timestamp,
+                mode='lines+markers',
+                name="Max",
+                yaxis='y2'
+            ))
+
+        if 'avg' in dataframe.columns:
+            lines.append(plotlygo.Scatter(
+                y=dataframe['avg'],
+                x=dataframe.header_timestamp,
+                mode='lines+markers',
+                name="Avg",
+                yaxis='y2'
+            ))
+
+        if 'min' in dataframe.columns:
+            lines.append(plotlygo.Scatter(
+                y=dataframe['min'],
+                x=dataframe.header_timestamp,
+                mode='lines+markers',
+                name="Min",
+                yaxis='y2'
+            ))
+
+        if 'median' in dataframe.columns:
+            lines.append(plotlygo.Scatter(
+                y=dataframe['median'],
+                x=dataframe.header_timestamp,
+                mode='lines+markers',
+                name="Median",
+                yaxis='y2'
+            ))
+
+        if 'mode' in dataframe.columns:
+            lines.append(plotlygo.Scatter(
+                y=dataframe['mode'],
+                x=dataframe.header_timestamp,
+                mode='lines+markers',
+                name="Mode",
+                yaxis='y2'
+            ))
+
+        if 'sum' in dataframe.columns:
+            lines.append(plotlygo.Scatter(
+                y=dataframe['sum'],
+                x=dataframe.header_timestamp,
+                mode='lines+markers',
+                name="Sum",
+                yaxis='y2',
+                visible='legendonly'
+            ))
+
+        if 'stddev' in dataframe.columns:
+            lines.append(plotlygo.Scatter(
+                y=dataframe['stddev'],
+                x=dataframe.header_timestamp,
+                mode='lines+markers',
+                name="Stddev",
+                yaxis='y2',
+                visible='legendonly'
+            ))
+
+        if 'spread' in dataframe.columns:
+            lines.append(plotlygo.Scatter(
+                y=dataframe['spread'],
+                x=dataframe.header_timestamp,
+                mode='lines+markers',
+                name="Spread",
+                yaxis='y2',
+                visible='legendonly'
+            ))
+
+    data = plotlygo.Data(lines)
+    layout = plotlygo.Layout(
+        width=1100,
+        height=650,
+        yaxis=dict(title='Number of Packages', side='right'),
+        yaxis2=dict(title='Dimension Value',
+        overlaying='y',
+        side='left'
+    ))
+    plotly.iplot(plotlygo.Figure(data=data, layout=layout))
+
+
+def map_device_port_to_dropdown_widget(edge_id: str) -> dict:
+    """Maps set of device port to a dropdown.
+    
+    Arguments:
+        edge_id {str} -- Edge ID that identifies the device
+    
+    Returns:
+        dict -- configuration for the dropdown
+    
+    Raises:
+        Exception -- when something goes wrong with the request
+    """
+    portMapping = {}
+
+    response = http_get_request(
+        '/describe/device/{0}/ports/last?precision=ms'.format(edge_id)
+    )
+
+    if response.status_code == 200:
+        d = json.loads(response.text)
+
+        for port in d['ports']:
+            label = '{0:3} | {1:25} ({2})'.format(
+                port['port'],
+                humanize_thing_code(port["dimension_thing_code"]),
+                arrow.get(
+                    port["header_timestamp"] / 1000,
+                    tzinfo=tz.gettz('America/Sao_Paulo')
+                ).humanize()
+            )
+
+            portMapping[label] = port['port']
+
+        return portMapping
+
+    else:
+        raise Exception('Couldn\'t retrieve data')
+
+def map_device_port_sensors_to_dropdown_widget(edge_id: str, port: int) -> dict:
+    """Maps set of device port sensors to a dropdown.
+    
+    Arguments:
+        edge_id {str} -- Edge ID that identifies the device
+        port {int} -- port to fetch
+    
+    Returns:
+        dict -- configuration for the dropdown
+    
+    Raises:
+        Exception -- when something goes wrong with the request
+    """
+    sensorMapping = {}
+
+    response = http_get_request(
+        '/describe/device/{0}/port/{1}/sensors/last?precision=ms' \
+        .format(edge_id, port)
+    )
+
+    if response.status_code == 200:
+        d = json.loads(response.text)
+
+        for sensor in d['sensors']:
+            label = '{0:3} | {1:25} | {2:6}{3:15} ({4})'.format(
+                sensor['sensor'],
+                humanize_dimension_code(sensor["dimension_code"]),
+                sensor["dimension_value"],
+                humanize_unity_code(sensor["dimension_unity_code"]),
+                arrow.get(
+                    sensor["header_timestamp"] / 1000,
+                    tzinfo=tz.gettz('America/Sao_Paulo')
+                ).humanize()
+            )
+
+            sensorMapping[label] = sensor['sensor']
+
+        return sensorMapping
+
+    else:
+        raise Exception('Couldn\'t retrieve data')
+
+def map_device_port_sensor_dimensions_to_dropdown_widget(
+    edge_id: str, port: int, sensor: int
+):
+    """Maps set of device port sensor dimensions to a dropdown.
+    
+    Arguments:
+        edge_id {str} -- Edge ID that identifies the device
+        port {int} -- port to fetch
+        sensor {int} -- sensor to fetch
+    
+    Returns:
+        dict -- configuration for the dropdown
+    
+    Raises:
+        Exception -- when something goes wrong with the request
+    """
+    dimensionMapping = {}
+
+    response = http_get_request(
+        '/describe/device/{0}/port/{1}/sensor/{2}/dimensions/last'
+        '?precision=ms'.format(edge_id, port, sensor)
+    )
+
+    if response.status_code == 200:
+        d = json.loads(response.text)
+
+        for dimension in d['dimensions']:
+            label = '{0:3} | {1:25} | {2:6}{3:15} ({4})'.format(
+                dimension['dimension_code'],
+                humanize_dimension_code(dimension["dimension_code"]),
+                dimension["dimension_value"],
+                humanize_unity_code(dimension["dimension_unity_code"]),
+                arrow.get(
+                    dimension["header_timestamp"] / 1000,
+                    tzinfo=tz.gettz('America/Sao_Paulo')
+                ).humanize()
+            )
+
+            dimensionMapping[label] = dimension['dimension_code']
+
+        return dimensionMapping
+
+    else:
+        raise Exception('Couldn\'t retrieve data')
+
+
+# Maintaining compatibility with old versions
+translateThingCode = humanize_thing_code
+translateUnityCode = humanize_unity_code
+translateDimensionCode = humanize_dimension_code

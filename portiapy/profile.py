@@ -1,83 +1,155 @@
-#####################################
-#              Profile              #
-#####################################
+"""Profile tools where it is possible to create snapshots of a device's state
+on any given time.
+"""
 
-# Libraries
-from enum import Enum             # Support for enumerations
-import json                       # JSON encoder and decoder
+import json
+from enum import Enum
+
 import portiapy.utils as utils
 
-# Enums
+
 class ProfileStrategies(Enum):
-	BY_ZERO_PORT = 1
-	BY_PORTS     = 2
+    BY_ZERO_PORT = 1
+    BY_PORTS = 2
 
-# Functions
-def about():
-    print("portiapy.profile - an Agriness Edge project")
+    @property
+    def endpoint(self):
+        return self.name.lower().replace('_', '')
 
-def resolveStrategy(strategy):
-    if strategy == ProfileStrategies.BY_ZERO_PORT:
-        return 'byzeroport'
-    else:
-        return 'byports'
 
-########################################
-# deviceProfile
-########################################
-# /profile/device/:device/:strategy/:interval
-########################################
-def deviceProfile(portiaConfig, edgeId, strategy=ProfileStrategies.BY_ZERO_PORT, interval=30, params={ 'precision': 'ms', 'sort': True }):
+def device_profile(
+    portia_config: dict,
+    edge_id: str,
+    strategy: ProfileStrategies=ProfileStrategies.BY_ZERO_PORT,
+    interval: int=30,
+    params: dict={ 'sort': True, 'precision': 'ms', 'timezone': 'Etc/UTC' }
+) -> dict:
+    """Retrieves a device's profile.
 
-    endpoint = '/profile/device/{0}/{1}/{2}{3}'.format( edgeId, resolveStrategy(strategy), interval, utils.buildGetParams(params) )
-    response = utils.httpGetRequest(portiaConfig, endpoint)
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments 
+        edge_id {str} -- Edge ID that identifies the device
+    
+    Keyword Arguments:
+        strategy {ProfileStrategies} -- strategy to use when building the
+                                        profile (default: 
+                                        {ProfileStrategies.BY_ZERO_PORT})
+        interval {int} -- interval of time in minutes to build the profile
+                          (default: {30})
+        params {dict} -- params to send to the service (default: 
+                         {{ 'sort', 'precision': 'ms',
+                         'timezone': 'Etc/UTC' }})
 
-    if response.status_code == 200:
+    Returns:
+        dict -- dictionary with the device's profile
+    """
+    endpoint = '/profile/device/{0}/{1}/{2}'.format(
+        edge_id, strategy.endpoint, interval
+    )
 
-        d = json.loads(response.text)
-        if portiaConfig['debug']:
-            print( '[portia-debug]: {0}'.format(d['ports']) )
-        return d
-
-    else:
-        raise Exception('couldn\'t retrieve data')
-
-########################################
-# portProfile
-########################################
-# /profile/device/:device/port/:port/:strategy/:interval
-########################################
-def portProfile(portiaConfig, edgeId, port, strategy=ProfileStrategies.BY_ZERO_PORT, interval=30, params={ 'precision': 'ms', 'sort': True }):
-
-    endpoint = '/profile/device/{0}/port/{1}/{2}/{3}{4}'.format( edgeId, port, resolveStrategy(strategy), interval, utils.buildGetParams(params) )
-    response = utils.httpGetRequest(portiaConfig, endpoint)
+    response = utils.http_get_request(portia_config, endpoint, params)
 
     if response.status_code == 200:
 
         d = json.loads(response.text)
-        if portiaConfig['debug']:
-            print( '[portia-debug]: {0}'.format(d['ports']) )
+        if portia_config['debug']:
+            print('[portia-debug]: {0}'.format(d.get('ports')))
+
         return d
 
     else:
-        raise Exception('couldn\'t retrieve data')
+        raise Exception("couldn't retrieve data")
 
-########################################
-# sensorProfile
-########################################
-# /profile/device/:device/port/:port/sensor/:sensor/:strategy/:interval
-########################################
-def sensorProfile(portiaConfig, edgeId, port, sensor, strategy=ProfileStrategies.BY_ZERO_PORT, interval=30, params={ 'precision': 'ms', 'sort': True }):
 
-    endpoint = '/profile/device/{0}/port/{1}/sensor/{2}/{3}/{4}{5}'.format( edgeId, port, sensor, resolveStrategy(strategy), interval, utils.buildGetParams(params) )
-    response = utils.httpGetRequest(portiaConfig, endpoint)
+def port_profile(
+    portia_config: dict,
+    edge_id: str,
+    port: int,
+    strategy: ProfileStrategies=ProfileStrategies.BY_ZERO_PORT,
+    interval: int=30,
+    params: dict={ 'sort': True, 'precision': 'ms', 'timezone': 'Etc/UTC' }
+) -> dict:
+    """Retrieves a port's profile.
+
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments
+        edge_id {str} -- Edge ID that identifies the device
+        port {int} -- port of the device
+    
+    Keyword Arguments:
+        strategy {ProfileStrategies} -- strategy to use when building the
+                                        profile (default: 
+                                        {ProfileStrategies.BY_ZERO_PORT})
+        interval {int} -- interval of time in minutes to build the profile
+                          (default: {30})
+        params {dict} -- params to send to the service (default: 
+                         {{ 'sort', 'precision': 'ms',
+                         'timezone': 'Etc/UTC' }})
+
+    Returns:
+        dict -- dictionary with the port's profile
+    """
+    endpoint = '/profile/device/{0}/port/{1}/{2}/{3}'.format(
+        edge_id, port, strategy.endpoint, interval
+    )
+
+    response = utils.http_get_request(portia_config, endpoint, params)
 
     if response.status_code == 200:
 
         d = json.loads(response.text)
-        if portiaConfig['debug']:
-            print( '[portia-debug]: {0}'.format(d['ports']) )
+        if portia_config['debug']:
+            print('[portia-debug]: {0}'.format(d.get('ports')))
+
         return d
 
     else:
-        raise Exception('couldn\'t retrieve data')
+        raise Exception("couldn't retrieve data")
+
+
+def sensor_profile(
+    portia_config: dict,
+    edge_id: str,
+    port: int,
+    sensor: int,
+    strategy: ProfileStrategies=ProfileStrategies.BY_ZERO_PORT,
+    interval: int=30,
+    params: dict={ 'sort': True, 'precision': 'ms', 'timezone': 'Etc/UTC' }
+) -> dict:
+    """Retrieves a sensor's profile.
+
+    Arguments:
+        portia_config {dict} -- Portia's configuration arguments
+        edge_id {str} -- Edge ID that identifies the device
+        port {int} -- port of the device
+        sensor {int} -- sensor of the device
+    
+    Keyword Arguments:
+        strategy {ProfileStrategies} -- strategy to use when building the
+                                        profile (default: 
+                                        {ProfileStrategies.BY_ZERO_PORT})
+        interval {int} -- interval of time in minutes to build the profile
+                          (default: {30})
+        params {dict} -- params to send to the service (default: 
+                         {{ 'sort', 'precision': 'ms',
+                         'timezone': 'Etc/UTC' }})
+
+    Returns:
+        dict -- dictionary with the sensor's profile
+    """
+    endpoint = '/profile/device/{0}/port/{1}/sensor/{2}/{3}/{4}'.format(
+        edge_id, port, sensor, strategy.endpoint, interval
+    )
+
+    response = utils.http_get_request(portia_config, endpoint, params)
+
+    if response.status_code == 200:
+
+        d = json.loads(response.text)
+        if portia_config['debug']:
+            print('[portia-debug]: {0}'.format(d.get('ports')))
+
+        return d
+
+    else:
+        raise Exception("couldn't retrieve data")
