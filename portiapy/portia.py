@@ -424,6 +424,17 @@ class EdgeDeviceSensor(object):
 			self, dimension, self.portia_config
 		)
 
+	def event(self, event: int) -> 'EdgeDeviceEventFromSensor':
+		"""Builds a new EdgeDeviceEventFromSensor instance.
+		
+		Arguments:
+			event {int} -- event code of the device
+
+		Returns:
+			EdgeDeviceEventFromSensor -- EdgeDeviceEventFromSensor instance
+		"""
+		return EdgeDeviceEventFromSensor(self, event, self.portia_config)
+
 	def dimensions(self, last: bool=False, params: dict=None) -> object:
 		"""Lists a device's dimensions.
 		
@@ -521,6 +532,26 @@ class EdgeDeviceSensor(object):
 			params
 		))
 
+	def events(self, last: bool=False, params: dict=None) -> object:
+		"""Retrieves a device's events by its port and sensor.
+
+		Keyword Arguments:
+			last {bool} -- if the last event should be returned or not
+						   (default: {False})
+			params {dict} -- params to send to the service (default: {None})
+
+		Returns:
+			object -- object with the device's events
+		"""
+		return add_humanize_method(events.query_by_port_sensor(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.sensor,
+			last,
+			params
+		))
+
 
 class EdgeDeviceDimensionFromDevice(object):
 	"""Abstracts usage of all Portia endpoints concerning data that only need
@@ -597,6 +628,18 @@ class EdgeDeviceDimensionFromPort(object):
 		self.dimension = dimension
 		self.portia_config = portia_config
 
+	def event(self, event: int) -> 'EdgeDeviceEventFromDimension':
+		"""Builds a new EdgeDeviceEventFromDimension instance.
+		
+		Arguments:
+			event {int} -- event code of the device
+
+		Returns:
+			EdgeDeviceEventFromDimension -- EdgeDeviceEventFromDimension
+											instance
+		"""
+		return EdgeDeviceEventFromDimension(self, event, self.portia_config)
+
 	def select(self, last: bool=False, params: dict=None) -> object:
 		"""Retrieves a device's series by its port and dimension code.
 
@@ -609,6 +652,26 @@ class EdgeDeviceDimensionFromPort(object):
 			object -- object with the device's dimensions
 		"""
 		return add_humanize_method(select.query_by_port_dimension(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.dimension,
+			last,
+			params
+		))
+
+	def events(self, last: bool=False, params: dict=None) -> object:
+		"""Retrieves a device's events by its port and dimension code.
+
+		Keyword Arguments:
+			last {bool} -- if the last event should be returned or not
+						   (default: {False})
+			params {dict} -- params to send to the service (default: {None})
+
+		Returns:
+			object -- object with the device's events
+		"""
+		return add_humanize_method(events.query_by_port_dimension(
 			self.portia_config,
 			self.edge_id,
 			self.port,
@@ -641,6 +704,20 @@ class EdgeDeviceDimensionFromSensor(object):
 		self.sensor = edge_device_sensor.sensor
 		self.dimension = dimension
 		self.portia_config = portia_config
+
+	def event(self, event: int) -> 'EdgeDeviceEventFromSensorDimension':
+		"""Builds a new EdgeDeviceEventFromSensorDimension instance.
+		
+		Arguments:
+			event {int} -- event code of the device
+
+		Returns:
+			EdgeDeviceEventFromSensorDimension -- 
+				EdgeDeviceEventFromSensorDimension instance
+		"""
+		return EdgeDeviceEventFromSensorDimension(
+			self, event, self.portia_config
+		)
 
 	def select(self, last: bool=False, params: dict=None) -> object:
 		"""Retrieves a device's series by its port, sensor and dimension code.
@@ -689,5 +766,168 @@ class EdgeDeviceDimensionFromSensor(object):
 			self.dimension,
 			strategy,
 			interval,
+			params
+		))
+
+	def events(self, last: bool=False, params: dict=None) -> object:
+		"""Retrieves a device's events by its port, sensor and dimension code.
+
+		Keyword Arguments:
+			last {bool} -- if the last event should be returned or not
+						   (default: {False})
+			params {dict} -- params to send to the service (default: {None})
+
+		Returns:
+			object -- object with the device's events
+		"""
+		return add_humanize_method(events.query_by_port_sensor_dimension(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.sensor,
+			self.dimension,
+			last,
+			params
+		))
+
+
+class EdgeDeviceEventFromSensor(object):
+	"""Abstracts usage of all Portia endpoints concerning data that only need
+	an Edge ID, a port a sensor and an event code.
+	"""
+	def __init__(
+		self,
+		edge_device_sensor: EdgeDeviceSensor,
+		event: int,
+		portia_config: dict
+	):
+		"""EdgeDeviceEventFromSensor's constructor.
+		
+		Arguments:
+			edge_device_sensor {EdgeDeviceSensor} -- instance of an Edge device
+												 	 sensor
+			event {int} -- event code of the device
+			portia_config {dict} -- Portia's configuration arguments
+		"""
+		self.edge_id = edge_device_sensor.edge_id
+		self.port = edge_device_sensor.port
+		self.sensor = edge_device_sensor.sensor
+		self.event = event
+		self.portia_config = portia_config
+
+	def events(self, last: bool=False, params: dict=None) -> object:
+		"""Retrieves a device's events by its port, sensor and event code.
+
+		Keyword Arguments:
+			last {bool} -- if the last event should be returned or not
+						   (default: {False})
+			params {dict} -- params to send to the service (default: {None})
+
+		Returns:
+			object -- object with the device's events
+		"""
+		return add_humanize_method(events.query_by_port_sensor_event(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.sensor,
+			self.event,
+			last,
+			params
+		))
+
+
+class EdgeDeviceEventFromDimension(object):
+	"""Abstracts usage of all Portia endpoints concerning data that only need
+	an Edge ID, a port a dimension code and an event code.
+	"""
+	def __init__(
+		self,
+		edge_device_dimension_from_port: EdgeDeviceDimensionFromPort,
+		event: int,
+		portia_config: dict
+	):
+		"""EdgeDeviceEventFromDimension's constructor.
+		
+		Arguments:
+			edge_device_dimension_from_port {EdgeDeviceDimensionFromPort} -- 
+				instance of an Edge device dimension from port
+			event {int} -- event code of the device
+			portia_config {dict} -- Portia's configuration arguments
+		"""
+		self.edge_id = edge_device_dimension_from_port.edge_id
+		self.port = edge_device_dimension_from_port.port
+		self.dimension = edge_device_dimension_from_port.dimension
+		self.event = event
+		self.portia_config = portia_config
+
+	def events(self, last: bool=False, params: dict=None) -> object:
+		"""Retrieves a device's events by its port, dimension code and event
+		code.
+
+		Keyword Arguments:
+			last {bool} -- if the last event should be returned or not
+						   (default: {False})
+			params {dict} -- params to send to the service (default: {None})
+
+		Returns:
+			object -- object with the device's events
+		"""
+		return add_humanize_method(events.query_by_port_dimension_event(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.dimension,
+			self.event,
+			last,
+			params
+		))
+
+
+class EdgeDeviceEventFromSensorDimension(object):
+	"""Abstracts usage of all Portia endpoints concerning data that only need
+	an Edge ID, a port, sensor, dimension code and an event code.
+	"""
+	def __init__(
+		self,
+		edge_device_dimension_from_sensor: EdgeDeviceDimensionFromSensor,
+		event: int,
+		portia_config: dict
+	):
+		"""EdgeDeviceEventFromDimension's constructor.
+		
+		Arguments:
+			edge_device_dimension_from_sensor {EdgeDeviceDimensionFromSensor}
+				-- instance of an Edge device dimension from sensor
+			event {int} -- event code of the device
+			portia_config {dict} -- Portia's configuration arguments
+		"""
+		self.edge_id = edge_device_dimension_from_sensor.edge_id
+		self.port = edge_device_dimension_from_sensor.port
+		self.sensor = edge_device_dimension_from_sensor.sensor
+		self.dimension = edge_device_dimension_from_sensor.dimension
+		self.event = event
+		self.portia_config = portia_config
+
+	def events(self, last: bool=False, params: dict=None) -> object:
+		"""Retrieves a device's events by its port, sensor, dimension code and
+		event code.
+
+		Keyword Arguments:
+			last {bool} -- if the last event should be returned or not
+						   (default: {False})
+			params {dict} -- params to send to the service (default: {None})
+
+		Returns:
+			object -- object with the device's events
+		"""
+		return add_humanize_method(events.query_by_port_sensor_dimension_event(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.sensor,
+			self.dimension,
+			self.event,
+			last,
 			params
 		))

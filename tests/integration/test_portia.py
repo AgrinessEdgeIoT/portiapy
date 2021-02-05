@@ -432,6 +432,78 @@ class TestEdgeDeviceSensor(unittest.TestCase):
 			self.assertEqual(row.dimension_unity_code, 1)
 			self.assertEqual(row.dimension_unity, '°C')
 
+	def test_events(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4) \
+			.sensor(1).events(params={
+		        'from': 1609470000000,
+		        'to': 1609729199000,
+		        'order': None,
+		        'limit': None,
+		        'precision': 'ms',
+		        'timezone': 'Etc/UTC'
+		    })
+
+		for i, row in events.iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.event_code, 1)
+
+		for i, row in events.humanize().iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_thing, 'Sensor_Inobram_TU')
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_unity, '°C')
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.dimension, 'Point Temperature')
+			self.assertEqual(row.event_code, 1)
+			self.assertEqual(row.event, 'Communication State')
+
+	def test_events_last(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4) \
+			.sensor(1).events(
+				last=True,
+				params={
+			        'from': 1609470000000,
+			        'to': 1609729199000,
+			        'order': None,
+			        'limit': None,
+			        'precision': 'ms',
+			        'timezone': 'Etc/UTC'
+			    }
+			)
+
+		self.assertEqual(events.iloc[0].dimension_thing_code, 16)
+		self.assertEqual(events.iloc[0].dimension_unity_code, 1)
+		self.assertEqual(events.iloc[0].dimension_code, 1)
+		self.assertEqual(events.iloc[0].event_code, 1)
+
+		humanized_events = events.humanize()
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing_code, 16
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing, 'Sensor_Inobram_TU'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity, '°C'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension, 'Point Temperature'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event, 'Communication State'
+		)
+
 
 class TestEdgeDeviceDimensionFromDevice(unittest.TestCase):
 	"""Set of integration tests for all functions concerning the
@@ -574,6 +646,78 @@ class TestEdgeDeviceDimensionFromPort(unittest.TestCase):
 			humanized_dimensions.iloc[0].dimension, 'Point Temperature'
 		)
 
+	def test_events(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4) \
+			.dimension(1).events(params={
+		        'from': 1609470000000,
+		        'to': 1609729199000,
+		        'order': None,
+		        'limit': None,
+		        'precision': 'ms',
+		        'timezone': 'Etc/UTC'
+		    })
+
+		for i, row in events.iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.event_code, 1)
+
+		for i, row in events.humanize().iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_thing, 'Sensor_Inobram_TU')
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_unity, '°C')
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.dimension, 'Point Temperature')
+			self.assertEqual(row.event_code, 1)
+			self.assertEqual(row.event, 'Communication State')
+
+	def test_events_last(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4) \
+			.dimension(1).events(
+				last=True,
+				params={
+			        'from': 1609470000000,
+			        'to': 1609729199000,
+			        'order': None,
+			        'limit': None,
+			        'precision': 'ms',
+			        'timezone': 'Etc/UTC'
+			    }
+			)
+
+		self.assertEqual(events.iloc[0].dimension_thing_code, 16)
+		self.assertEqual(events.iloc[0].dimension_unity_code, 1)
+		self.assertEqual(events.iloc[0].dimension_code, 1)
+		self.assertEqual(events.iloc[0].event_code, 1)
+
+		humanized_events = events.humanize()
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing_code, 16
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing, 'Sensor_Inobram_TU'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity, '°C'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension, 'Point Temperature'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event, 'Communication State'
+		)
+
 
 class TestEdgeDeviceDimensionFromSensor(unittest.TestCase):
 	"""Set of integration tests for all functions concerning the
@@ -692,6 +836,360 @@ class TestEdgeDeviceDimensionFromSensor(unittest.TestCase):
 		for i, row in summarized_dimensions.humanize().iterrows():
 			self.assertEqual(row.dimension_unity_code, 1)
 			self.assertEqual(row.dimension_unity, '°C')
+
+	def test_events(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4).sensor(1) \
+			.dimension(1).events(params={
+		        'from': 1609470000000,
+		        'to': 1609729199000,
+		        'order': None,
+		        'limit': None,
+		        'precision': 'ms',
+		        'timezone': 'Etc/UTC'
+		    })
+
+		for i, row in events.iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.event_code, 1)
+
+		for i, row in events.humanize().iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_thing, 'Sensor_Inobram_TU')
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_unity, '°C')
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.dimension, 'Point Temperature')
+			self.assertEqual(row.event_code, 1)
+			self.assertEqual(row.event, 'Communication State')
+
+	def test_events_last(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4).sensor(1) \
+			.dimension(1).events(
+				last=True,
+				params={
+			        'from': 1609470000000,
+			        'to': 1609729199000,
+			        'order': None,
+			        'limit': None,
+			        'precision': 'ms',
+			        'timezone': 'Etc/UTC'
+			    }
+			)
+
+		self.assertEqual(events.iloc[0].dimension_thing_code, 16)
+		self.assertEqual(events.iloc[0].dimension_unity_code, 1)
+		self.assertEqual(events.iloc[0].dimension_code, 1)
+		self.assertEqual(events.iloc[0].event_code, 1)
+
+		humanized_events = events.humanize()
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing_code, 16
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing, 'Sensor_Inobram_TU'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity, '°C'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension, 'Point Temperature'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event, 'Communication State'
+		)
+
+
+class TestEdgeDeviceEventFromSensor(unittest.TestCase):
+	"""Set of integration tests for all functions concerning the
+	EdgeDeviceEventFromSensor instance.
+	"""
+	@classmethod
+	def setUpClass(cls):
+		"""Creates a Portia configuration to test the instance.
+		"""
+
+		# Settings for test
+		base_url = os.getenv('PORTIA_URL', 'https://api-portia.agriness.io/v3')
+		token = os.getenv('PORTIA_TOKEN')
+
+		# Creating Portia API instance
+		cls.portia_api = portia.PortiaApi({
+			'baseurl': base_url,
+			'authorization': token,
+			'debug': False,
+			'Accept': 'text/csv'
+		})
+
+	def test_events(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4).sensor(1) \
+			.event(1).events(params={
+		        'from': 1609470000000,
+		        'to': 1609729199000,
+		        'order': None,
+		        'limit': None,
+		        'precision': 'ms',
+		        'timezone': 'Etc/UTC'
+		    })
+
+		for i, row in events.iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.event_code, 1)
+
+		for i, row in events.humanize().iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_thing, 'Sensor_Inobram_TU')
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_unity, '°C')
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.dimension, 'Point Temperature')
+			self.assertEqual(row.event_code, 1)
+			self.assertEqual(row.event, 'Communication State')
+
+	def test_events_last(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4).sensor(1) \
+			.event(1).events(
+				last=True,
+				params={
+			        'from': 1609470000000,
+			        'to': 1609729199000,
+			        'order': None,
+			        'limit': None,
+			        'precision': 'ms',
+			        'timezone': 'Etc/UTC'
+			    }
+			)
+
+		self.assertEqual(events.iloc[0].dimension_thing_code, 16)
+		self.assertEqual(events.iloc[0].dimension_unity_code, 1)
+		self.assertEqual(events.iloc[0].dimension_code, 1)
+		self.assertEqual(events.iloc[0].event_code, 1)
+
+		humanized_events = events.humanize()
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing_code, 16
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing, 'Sensor_Inobram_TU'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity, '°C'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension, 'Point Temperature'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event, 'Communication State'
+		)
+
+
+class TestEdgeDeviceEventFromDimension(unittest.TestCase):
+	"""Set of integration tests for all functions concerning the
+	EdgeDeviceEventFromDimension instance.
+	"""
+	@classmethod
+	def setUpClass(cls):
+		"""Creates a Portia configuration to test the instance.
+		"""
+
+		# Settings for test
+		base_url = os.getenv('PORTIA_URL', 'https://api-portia.agriness.io/v3')
+		token = os.getenv('PORTIA_TOKEN')
+
+		# Creating Portia API instance
+		cls.portia_api = portia.PortiaApi({
+			'baseurl': base_url,
+			'authorization': token,
+			'debug': False,
+			'Accept': 'text/csv'
+		})
+
+	def test_events(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4).dimension(1) \
+			.event(1).events(params={
+		        'from': 1609470000000,
+		        'to': 1609729199000,
+		        'order': None,
+		        'limit': None,
+		        'precision': 'ms',
+		        'timezone': 'Etc/UTC'
+		    })
+
+		for i, row in events.iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.event_code, 1)
+
+		for i, row in events.humanize().iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_thing, 'Sensor_Inobram_TU')
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_unity, '°C')
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.dimension, 'Point Temperature')
+			self.assertEqual(row.event_code, 1)
+			self.assertEqual(row.event, 'Communication State')
+
+	def test_events_last(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4).dimension(1) \
+			.event(1).events(
+				last=True,
+				params={
+			        'from': 1609470000000,
+			        'to': 1609729199000,
+			        'order': None,
+			        'limit': None,
+			        'precision': 'ms',
+			        'timezone': 'Etc/UTC'
+			    }
+			)
+
+		self.assertEqual(events.iloc[0].dimension_thing_code, 16)
+		self.assertEqual(events.iloc[0].dimension_unity_code, 1)
+		self.assertEqual(events.iloc[0].dimension_code, 1)
+		self.assertEqual(events.iloc[0].event_code, 1)
+
+		humanized_events = events.humanize()
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing_code, 16
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing, 'Sensor_Inobram_TU'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity, '°C'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension, 'Point Temperature'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event, 'Communication State'
+		)
+
+
+class TestEdgeDeviceEventFromSensorDimension(unittest.TestCase):
+	"""Set of integration tests for all functions concerning the
+	EdgeDeviceEventFromSensorDimension instance.
+	"""
+	@classmethod
+	def setUpClass(cls):
+		"""Creates a Portia configuration to test the instance.
+		"""
+
+		# Settings for test
+		base_url = os.getenv('PORTIA_URL', 'https://api-portia.agriness.io/v3')
+		token = os.getenv('PORTIA_TOKEN')
+
+		# Creating Portia API instance
+		cls.portia_api = portia.PortiaApi({
+			'baseurl': base_url,
+			'authorization': token,
+			'debug': False,
+			'Accept': 'text/csv'
+		})
+
+	def test_events(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4).sensor(1) \
+			.dimension(1).event(1).events(params={
+		        'from': 1609470000000,
+		        'to': 1609729199000,
+		        'order': None,
+		        'limit': None,
+		        'precision': 'ms',
+		        'timezone': 'Etc/UTC'
+		    })
+
+		for i, row in events.iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.event_code, 1)
+
+		for i, row in events.humanize().iterrows():
+			self.assertEqual(row.dimension_thing_code, 16)
+			self.assertEqual(row.dimension_thing, 'Sensor_Inobram_TU')
+			self.assertEqual(row.dimension_unity_code, 1)
+			self.assertEqual(row.dimension_unity, '°C')
+			self.assertEqual(row.dimension_code, 1)
+			self.assertEqual(row.dimension, 'Point Temperature')
+			self.assertEqual(row.event_code, 1)
+			self.assertEqual(row.event, 'Communication State')
+
+	def test_events_last(self):
+		events = self.portia_api.device('2DPEQ572HEXP').port(4).sensor(1) \
+			.dimension(1).event(1).events(
+				last=True,
+				params={
+			        'from': 1609470000000,
+			        'to': 1609729199000,
+			        'order': None,
+			        'limit': None,
+			        'precision': 'ms',
+			        'timezone': 'Etc/UTC'
+			    }
+			)
+
+		self.assertEqual(events.iloc[0].dimension_thing_code, 16)
+		self.assertEqual(events.iloc[0].dimension_unity_code, 1)
+		self.assertEqual(events.iloc[0].dimension_code, 1)
+		self.assertEqual(events.iloc[0].event_code, 1)
+
+		humanized_events = events.humanize()
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing_code, 16
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_thing, 'Sensor_Inobram_TU'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_unity, '°C'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].dimension, 'Point Temperature'
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event_code, 1
+		)
+		self.assertEqual(
+			humanized_events.iloc[0].event, 'Communication State'
+		)
 
 
 if __name__ == '__main__':
