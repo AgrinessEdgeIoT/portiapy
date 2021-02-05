@@ -13,9 +13,16 @@ python-packages:
 install: system-packages python-packages
 
 unit-tests:
-	python3 -m unittest tests.test_utils -vvv
+	python3 -m unittest -vvv \
+		tests.unit.test_utils
 
 integration-tests:
+	python3 -m unittest -vvv \
+		tests.integration.test_describe \
+		tests.integration.test_profile \
+		tests.integration.test_select \
+		tests.integration.test_summary \
+		tests.integration.test_events
 
 tests: unit-tests integration-tests
 

@@ -143,87 +143,56 @@ class TestHumanization(unittest.TestCase):
 		)
 		self.assertEqual(h_dataframe.iloc[1].get('dimension_unity'), '%')
 
-	# def test_humanizeJson(self):
-	# 	"""Steps:
-	# 	1 - Creates a JSON object
-	# 	2 - Uses humanizeJson(json) and verify results
-	# 	3 - Uses humanizeJson(json, datetime=True) and verify results
-	# 	"""
-	# 	json_ = {
-	# 		'thing_code': 13,
-	# 		'ports': [{
-	# 			'thing_code': 15,
-	# 			'sensors': [{
-	# 				'last_package': {
-	# 					'header_timestamp': 1565634220016,
-	# 					'dimension_value': 60,
-	# 					'dimension_code': 1,
-	# 					'dimension_unity_code': 1,
-	# 					'dimension_thing_code': 15
-	# 				}
-	# 			}, {
-	# 				'last_package': {
-	# 					'header_timestamp': 1565634165295,
-	# 					'dimension_value': 60,
-	# 					'dimension_code': 3,
-	# 					'dimension_unity_code': 2,
-	# 					'dimension_thing_code': 16
-	# 				}
-	# 			}]
-	# 		}]
-	# 	}
+	def test_humanize_dimensions_json(self):
+		json_ = {
+			'device': 'AAAABBBBCCCC',
+			'channel_id': 'AAAABBBBCCCC',
+			'channel_code': 14,
+			'thing_code': 14,
+			'ports': [{
+				'port': "0",
+				'thing_code': 14,
+				'sensors': [{
+					'sensor': '1',
+					'last_package': {
+						'header_timestamp': '2021-02-04T14:09:38.115Z',
+						'dimension_value': 1847,
+						'dimension_code': '15',
+						'dimension_unity_code': 6,
+						'dimension_thing_code': 14
+					}
+				}]
+			}]
+		}
 
-	# 	res = utils.humanizeJson(json_)
-	# 	self.assertIsInstance(res.get('thing_code'), str)
-	# 	for port in res.get('ports'):
-	# 		self.assertIsInstance(port.get('thing_code'), str)
-	# 		for sensor in port.get('sensors'):
-	# 			last_package = sensor.get('last_package')
-	# 			self.assertIn('header_timestamp', last_package.keys())
-	# 			self.assertIn('dimension_value', last_package.keys())
-	# 			self.assertNotIn('dimension_code', last_package.keys())
-	# 			self.assertIn('dimension', last_package.keys())
-	# 			self.assertNotIn('dimension_unity_code', last_package.keys())
-	# 			self.assertIn('dimension_unity', last_package.keys())
-	# 			self.assertNotIn('dimension_thing_code', last_package.keys())
-	# 			self.assertIn('dimension_thing', last_package.keys())
+		h_json = utils.humanize_dimensions_json(json_)
 
-	# 			self.assertIsInstance(last_package.get('dimension'), str)
-	# 			self.assertIsInstance(last_package.get('dimension_unity'), str)
-	# 			self.assertIsInstance(last_package.get('dimension_thing'), str)
-
-	# 	json_ = {
-	# 		'thing_code': 13,
-	# 		'ports': [{
-	# 			'thing_code': 15,
-	# 			'sensors': [{
-	# 				'last_package': {
-	# 					'header_timestamp': 1565634220016,
-	# 					'dimension_value': 60,
-	# 					'dimension_code': 1,
-	# 					'dimension_unity_code': 1,
-	# 					'dimension_thing_code': 15
-	# 				}
-	# 			}, {
-	# 				'last_package': {
-	# 					'header_timestamp': 1565634165295,
-	# 					'dimension_value': 60,
-	# 					'dimension_code': 3,
-	# 					'dimension_unity_code': 2,
-	# 					'dimension_thing_code': 16
-	# 				}
-	# 			}]
-	# 		}]
-	# 	}
-
-	# 	res = utils.humanizeJson(json_, datetime=True)
-	# 	for port in res.get('ports'):
-	# 		for sensor in port.get('sensors'):
-	# 			last_package = sensor.get('last_package')
-	# 			self.assertNotIn('header_timestamp', last_package.keys())
-	# 			self.assertIn('header_datetime', last_package.keys())
-
-	# 			self.assertIsInstance(last_package.get('header_datetime'), str)
+		self.assertDictEqual(h_json, {
+			'device': 'AAAABBBBCCCC',
+			'channel_id': 'AAAABBBBCCCC',
+			'channel_code': 14,
+			'channel': 'T4_Agriness_v1',
+			'thing_code': 14,
+			'thing': 'T4_Agriness_v1',
+			'ports': [{
+				'port': "0",
+				'thing_code': 14,
+				'thing': 'T4_Agriness_v1',
+				'sensors': [{
+					'sensor': '1',
+					'last_package': {
+						'header_timestamp': '2021-02-04T14:09:38.115Z',
+						'dimension_value': 1847,
+						'dimension_code': '15',
+						'dimension': 'Accumulated Time',
+						'dimension_unity_code': 6,
+						'dimension_unity': 's',
+						'dimension_thing_code': 14,
+						'dimension_thing': 'T4_Agriness_v1'
+					}
+				}]
+			}]
+		})
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@
 
 # PortiaPy
 
-A Python stub for Agriness Edge's REST API. 
+A Python stub for Agriness Edge's Portia REST API.  
 
 ## Getting Started
 
@@ -16,6 +16,7 @@ A Python stub for Agriness Edge's REST API.
 * [plotly ^3.1.1](https://plot.ly/)
 * [pandas ^0.23.4](https://pandas.pydata.org/)
 * [arrow ^0.12.1](https://arrow.readthedocs.io/en/latest/)
+* [python-dotenv ^0.15.0](https://pypi.org/project/python-dotenv/)
 
 ### Installing
 
