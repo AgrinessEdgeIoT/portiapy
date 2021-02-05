@@ -509,52 +509,119 @@ class EdgeDeviceSensor(object):
 
 
 class EdgeDeviceDimensionFromPort(object):
-
-	########################################
-	# __init__
-	# - Constructor for EdgeDeviceDimensionFromPort
-	def __init__(self, edge_device_port, dimension, portia_config):
+	"""Abstracts usage of all Portia endpoints concerning data that only need
+	an Edge ID, a port and a dimension code.
+	"""
+	def __init__(
+		self,
+		edge_device_port: EdgeDevicePort,
+		dimension: int,
+		portia_config: dict
+	):
+		"""EdgeDeviceDimensionFromPort's constructor.
+		
+		Arguments:
+			edge_device_port {EdgeDevicePort} -- instance of an Edge device
+												 port
+			dimension {int} -- dimension code of the device
+			portia_config {dict} -- Portia's configuration arguments
+		"""
 		self.edge_id = edge_device_port.edge_id
 		self.port = edge_device_port.port
 		self.dimension = dimension
 		self.portia_config = portia_config
 
-	############################ Select ############################
-	def select(self, last=False, params=None):
-		if params is None:
-			return add_humanize_method( select.queryByPortDimension(self.portia_config, self.edge_id, self.port, self.dimension, last) )
-		else:
-			return add_humanize_method( select.queryByPortDimension(self.portia_config, self.edge_id, self.port, self.dimension, last, params) )
+	def select(self, last: bool=False, params: dict=None) -> object:
+		"""Retrieves a device's series by its port and dimension code.
 
-# class EdgeDeviceDimensionFromPort
+		Arguments:
+			last {bool} -- if the last package should be returned or not
+						   (default: {False})
+			params {dict} -- params to send to the service (default: {None})
 
-########################################
-# EdgeDeviceDimensionFromSensor
-# /device/:device/port/:port/sensor/:sensor/dimension/:dimension/...
+		Returns:
+			object -- object with the device's dimensions
+		"""
+		return add_humanize_method(select.query_by_port_dimension(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.dimension,
+			last,
+			params
+		))
+
+
 class EdgeDeviceDimensionFromSensor(object):
-
-	########################################
-	# __init__
-	# - Constructor for EdgeDeviceDimensionFromSensor
-	def __init__(self, edge_deviceSensor, dimension, portia_config):
-		self.edge_id = edge_deviceSensor.edge_id
-		self.port = edge_deviceSensor.port
-		self.sensor = edge_deviceSensor.sensor
+	"""Abstracts usage of all Portia endpoints concerning data that only need
+	an Edge ID, a port, a sensor and a dimension code.
+	"""
+	def __init__(
+		self,
+		edge_device_sensor: EdgeDeviceSensor,
+		dimension: int,
+		portia_config: dict
+	):
+		"""EdgeDeviceDimensionFromSensor's constructor.
+		
+		Arguments:
+			edge_device_sensor {EdgeDeviceSensor} -- instance of an Edge device
+					 								 sensor
+			dimension {int} -- dimension code of the device
+			portia_config {dict} -- Portia's configuration arguments
+		"""
+		self.edge_id = edge_device_sensor.edge_id
+		self.port = edge_device_sensor.port
+		self.sensor = edge_device_sensor.sensor
 		self.dimension = dimension
 		self.portia_config = portia_config
 
-	############################ Select ############################
-	def select(self, last=False, params=None):
-		if params is None:
-			return add_humanize_method( select.queryByPortSensorDimension(self.portia_config, self.edge_id, self.port, self.sensor, self.dimension, last) )
-		else:
-			return add_humanize_method( select.queryByPortSensorDimension(self.portia_config, self.edge_id, self.port, self.sensor, self.dimension, last, params) )
+	def select(self, last: bool=False, params: dict=None) -> object:
+		"""Retrieves a device's series by its port, sensor and dimension code.
 
-	########################### Summary ############################
-	def summary(self, strategy=summary.SummaryStrategies.PER_HOUR, interval=1, params=None):
-		if params is None:
-			return summary.queryByPortSensorDimension(self.portia_config, self.edge_id, self.port, self.sensor, self.dimension, strategy, interval)
-		else:
-			return summary.queryByPortSensorDimension(self.portia_config, self.edge_id, self.port, self.sensor, self.dimension, strategy, interval, params)
+		Arguments:
+			last {bool} -- if the last package should be returned or not
+						   (default: {False})
+			params {dict} -- params to send to the service (default: {None})
 
-# class EdgeDeviceDimensionFromSensor
+		Returns:
+			object -- object with the device's dimensions
+		"""
+		return add_humanize_method(select.query_by_port_sensor_dimension(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.sensor,
+			self.dimension,
+			last,
+			params
+		))
+
+	def summary(
+		self,
+		strategy: 'SummaryStrategies'=summary.SummaryStrategies.PER_HOUR,
+		interval=1,
+		params=None
+	) -> object:
+		"""Summarizes a device by port, sensor and dimension code.
+
+		Arguments:
+			strategy {SummaryStrategies} -- strategy to use when summarizing
+											(default:
+											{SummaryStrategies.PER_HOUR})
+			interval {int} -- interval of time to summarize (default: {1})
+			params {dict} -- params to send to the service (default: {None})
+
+		Returns:
+			object -- object with the device's summarized dimensions
+		"""
+		return add_humanize_method(summary.query_by_port_sensor_dimension(
+			self.portia_config,
+			self.edge_id,
+			self.port,
+			self.sensor,
+			self.dimension,
+			strategy,
+			interval,
+			params
+		))
