@@ -349,10 +349,11 @@ def humanize_unity_code(
     else:
         return translated_unity_code
 
-def humanize_dimensions_dataframe(
+def humanize_dataframe(
     dataframe: 'pd.DataFrame',
     locale: str='en-us',
     custom_dimension: list=None,
+    custom_event: list=None,
     custom_unity: list=None
 ) -> 'pd.DataFrame':
     """Humanizes a data frame's dimensions by translating its columns data to
@@ -362,88 +363,52 @@ def humanize_dimensions_dataframe(
         dataframe {pd.DataFrame} -- data frame to be humanized
     
     Keyword Arguments:
-        locale -- which language to use when humanizing (default {'en-us'})
-        custom_dimension -- custom list of dimension codes (default {None})
-        custom_unity -- custom list of unity codes (default {None})
+        locale {str} -- which language to use when humanizing
+                        (default {'en-us'})
+        custom_dimension {dict} -- custom list of dimension codes
+                                   (default {None})
+        custom_event {dict} -- custom list of event codes (default {None})
+        custom_unity {dict} -- custom list of unity codes (default {None})
 
     Returns:
         pd.DataFrame -- humanized data frame
     """
-    dataframe['dimension_thing'] = dataframe['dimension_thing_code'].map(
-        lambda thing_code: humanize_thing_code(int(thing_code))
-    )
-
-    dataframe['dimension'] = dataframe['dimension_code'].map(
-        lambda dimension_code: humanize_dimension_code(
-            dimension_code=int(dimension_code),
-            locale=locale,
-            custom=custom_dimension
+    if 'dimension_thing_code' in dataframe.columns:
+        dataframe['dimension_thing'] = dataframe['dimension_thing_code'].map(
+            lambda thing_code: humanize_thing_code(int(thing_code))
         )
-    )
 
-    dataframe['dimension_unity'] = dataframe['dimension_unity_code'].map(
-        lambda unity_code: humanize_unity_code(
-            unity_code=int(unity_code),
-            locale=locale,
-            custom=custom_unity
+
+    if 'dimension_unity_code' in dataframe.columns:
+        dataframe['dimension_unity'] = dataframe['dimension_unity_code'].map(
+            lambda unity_code: humanize_unity_code(
+                unity_code=int(unity_code),
+                locale=locale,
+                custom=custom_unity
+            )
         )
-    )
+
+    if 'dimension_code' in dataframe.columns:
+        dataframe['dimension'] = dataframe['dimension_code'].map(
+            lambda dimension_code: humanize_dimension_code(
+                dimension_code=int(dimension_code),
+                locale=locale,
+                custom=custom_dimension
+            )
+        )
+
+    if 'event_code' in dataframe.columns:
+        dataframe['event'] = dataframe['event_code'].map(
+            lambda event_code: humanize_event_code(
+                event_code=int(event_code),
+                locale=locale,
+                custom=custom_event
+            )
+        )
 
     return dataframe
 
-def humanize_events_dataframe(
-    dataframe: 'pd.DataFrame',
-    locale: str='en-us',
-    custom_dimension: list=None,
-    custom_event: list=None,
-    custom_unity: list=None
-) -> 'pd.DataFrame':
-    """Humanizes a data frame's events by translating its columns data to
-    actual text.
-
-    Arguments:
-        dataframe {pd.DataFrame} -- data frame to be humanized
-    
-    Keyword Arguments:
-        locale -- which language to use when humanizing (default {'en-us'})
-        custom_dimension -- custom list of dimension codes (default {None})
-        custom_event -- custom list of event codes (default {None})
-        custom_unity -- custom list of unity codes (default {None})
-
-    Returns:
-        pd.DataFrame -- humanized data frame
-    """
-    dataframe['dimension_thing'] = dataframe['dimension_thing_code'].map(
-        lambda thing_code: humanize_thing_code(int(thing_code))
-    )
-
-    dataframe['dimension'] = dataframe['dimension_code'].map(
-        lambda dimension_code: humanize_dimension_code(
-            dimension_code=int(dimension_code),
-            locale=locale,
-            custom=custom_dimension
-        )
-    )
-
-    dataframe['event'] = dataframe['event_code'].map(
-        lambda event_code: humanize_event_code(
-            event_code=int(event_code),
-            locale=locale,
-            custom=custom_event
-        )
-    )
-
-    dataframe['dimension_unity'] = dataframe['dimension_unity_code'].map(
-        lambda unity_code: humanize_unity_code(
-            unity_code=int(unity_code),
-            locale=locale,
-            custom=custom_unity
-        )
-    )
-
-    return dataframe
-
-def humanize_dimensions_json(
+def humanize_json(
     json_: dict,
     locale: str='en-us',
     custom_dimension: list=None,
@@ -456,12 +421,14 @@ def humanize_dimensions_json(
         json_ {dict} -- json to be humanized
     
     Keyword Arguments:
-        locale -- which language to use when humanizing (default {'en-us'})
-        custom_dimension -- custom list of dimension codes (default {None})
-        custom_unity -- custom list of unity codes (default {None})
+        locale {str} -- which language to use when humanizing
+                        (default {'en-us'})
+        custom_dimension {dict} -- custom list of dimension codes
+                                   (default {None})
+        custom_unity {dict} -- custom list of unity codes (default {None})
 
     Returns:
-        json -- humanized json
+        dict -- humanized dictionary
     """
     json_['channel'] = humanize_thing_code(json_['channel_code'])
     json_['thing'] = humanize_thing_code(json_['thing_code'])

@@ -81,7 +81,7 @@ class TestDescribe(unittest.TestCase):
 			self.portia_config, '2DPEQ572HEXP', 1, last=True
 		)
 
-		self.assertEqual(dimensions.iloc[1]['sensor'], 1)
+		self.assertEqual(dimensions.iloc[0]['sensor'], 1)
 		self.assertEqual(dimensions.iloc[0]['dimension_code'], 1)
 		self.assertEqual(dimensions.iloc[0]['dimension_thing_code'], 15)
 
@@ -106,7 +106,7 @@ class TestDescribe(unittest.TestCase):
 		self.assertEqual(dimensions.iloc[0]['dimension_thing_code'], 15)
 
 		self.assertEqual(dimensions.iloc[1]['dimension_code'], 9)
-		self.assertEqual(dimensions.iloc[0]['dimension_unity_code'], 1)
+		self.assertEqual(dimensions.iloc[1]['dimension_unity_code'], 1)
 		self.assertEqual(dimensions.iloc[1]['dimension_thing_code'], 15)
 
 

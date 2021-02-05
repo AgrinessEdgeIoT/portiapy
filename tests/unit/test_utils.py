@@ -51,48 +51,7 @@ class TestHumanization(unittest.TestCase):
 		})
 		self.assertEqual(h_dimension_code, 'Celsius')
 
-	def test_humanize_dimensions_dataframe(self):
-		dataframe = pd.DataFrame(data=[{
-			'header_timestamp': 1565634220016,
-			'dimension_value': 60,
-			'dimension_code': 1,
-			'dimension_unity_code': 1,
-			'dimension_thing_code': 15
-		}, {
-			'header_timestamp': 1565634165295,
-			'dimension_value': 60,
-			'dimension_code': 3,
-			'dimension_unity_code': 2,
-			'dimension_thing_code': 16
-		}])
-
-		h_dataframe = utils.humanize_dimensions_dataframe(dataframe)
-		self.assertIn('header_timestamp', h_dataframe.columns)
-		self.assertIn('dimension_value', h_dataframe.columns)
-		self.assertIn('dimension_code', h_dataframe.columns)
-		self.assertIn('dimension_unity_code', h_dataframe.columns)
-		self.assertIn('dimension_thing_code', h_dataframe.columns)
-		self.assertIn('dimension_thing', h_dataframe.columns)
-		self.assertIn('dimension', h_dataframe.columns)
-		self.assertIn('dimension_unity', h_dataframe.columns)
-
-		self.assertEqual(
-			h_dataframe.iloc[0].get('dimension_thing'), 'Sensor_Inobram_T'
-		)
-		self.assertEqual(
-			h_dataframe.iloc[0].get('dimension'), 'Point Temperature'
-		)
-		self.assertEqual(h_dataframe.iloc[0].get('dimension_unity'), '°C')
-
-		self.assertEqual(
-			h_dataframe.iloc[1].get('dimension_thing'), 'Sensor_Inobram_TU'
-		)
-		self.assertEqual(
-			h_dataframe.iloc[1].get('dimension'), 'Point Humidity'
-		)
-		self.assertEqual(h_dataframe.iloc[1].get('dimension_unity'), '%')
-
-	def test_humanize_events_dataframe(self):
+	def test_humanize_dataframe(self):
 		dataframe = pd.DataFrame(data=[{
 			'header_timestamp': 1565634220016,
 			'event_value': 'ON',
@@ -109,7 +68,7 @@ class TestHumanization(unittest.TestCase):
 			'dimension_thing_code': 16
 		}])
 
-		h_dataframe = utils.humanize_events_dataframe(dataframe)
+		h_dataframe = utils.humanize_dataframe(dataframe)
 		self.assertIn('header_timestamp', h_dataframe.columns)
 		self.assertIn('event_value', h_dataframe.columns)
 		self.assertIn('dimension_code', h_dataframe.columns)
@@ -143,7 +102,7 @@ class TestHumanization(unittest.TestCase):
 		)
 		self.assertEqual(h_dataframe.iloc[1].get('dimension_unity'), '%')
 
-	def test_humanize_dimensions_json(self):
+	def test_humanize_json(self):
 		json_ = {
 			'device': 'AAAABBBBCCCC',
 			'channel_id': 'AAAABBBBCCCC',
@@ -165,7 +124,7 @@ class TestHumanization(unittest.TestCase):
 			}]
 		}
 
-		h_json = utils.humanize_dimensions_json(json_)
+		h_json = utils.humanize_json(json_)
 
 		self.assertDictEqual(h_json, {
 			'device': 'AAAABBBBCCCC',
