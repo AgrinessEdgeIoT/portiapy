@@ -1,10 +1,10 @@
 arrow==0.12.1
 attrs==19.3.0
-bleach==3.1.0
+bleach==3.3.0
 certifi==2019.9.11
 cffi==1.13.2
 chardet==3.0.4
-cryptography==2.8
+cryptography==3.4.6
 decorator==4.4.1
 docutils==0.15.2
 entrypoints==0.3
@@ -18,11 +18,13 @@ keyring==19.2.0
 more-itertools==7.2.0
 nbformat==4.4.0
 numpy==1.17.4
+packaging==20.9
 pandas==0.23.4
 pkginfo==1.5.0.1
 plotly==3.1.1
 pycparser==2.19
 Pygments==2.4.2
+pyparsing==2.4.7
 pyrsistent==0.15.5
 python-dateutil==2.7.3
 python-dotenv==0.15.0

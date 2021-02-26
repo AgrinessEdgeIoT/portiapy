@@ -137,7 +137,8 @@ DIMENSION_CODES = {
         29: 'Point Light',
         30: 'Point Wind Speed',
         31: 'Point NH3 Concentration',
-        32: 'Point Angulation'
+        32: 'Point Angulation',
+        33: 'AccumulatedWeight'
     },
     'pt-br': {
         0:  'Dimensão Genérica',
@@ -172,7 +173,8 @@ DIMENSION_CODES = {
         29: 'Luz Pontual',
         30: 'Velocidade do Vento Pontual',
         31: 'Concentração de NH3 Pontual',
-        32: 'Angulação Pontual'
+        32: 'Angulação Pontual',
+        33: 'PesoAcumulado'
     }
 }
 
