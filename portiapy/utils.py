@@ -100,7 +100,9 @@ THING_CODES = {
     83: 'Sensor_IonTec_Water_Level_Meter',
     84: 'Sensor_IonTec_Environment_Meter',
     85: 'Sensor_IonTec_Feed_Bin_Meter',
-    86: 'Sensor_MSD_IDAL_Twin_v3'
+    86: 'Sensor_MSD_IDAL_Twin_v3',
+    87: 'Collector_Bin_Sentry_v1',
+    88: 'Sensor_Bin_Sentry'
 }
 
 DIMENSION_CODES = {
@@ -138,7 +140,8 @@ DIMENSION_CODES = {
         30: 'Point Wind Speed',
         31: 'Point NH3 Concentration',
         32: 'Point Angulation',
-        33: 'AccumulatedWeight'
+        33: 'Accumulated Weight',
+        34: 'Point Volume'
     },
     'pt-br': {
         0:  'Dimensão Genérica',
@@ -174,7 +177,8 @@ DIMENSION_CODES = {
         30: 'Velocidade do Vento Pontual',
         31: 'Concentração de NH3 Pontual',
         32: 'Angulação Pontual',
-        33: 'PesoAcumulado'
+        33: 'Peso Acumulado',
+        34: 'Volume Pontual'
     }
 }
 
@@ -217,7 +221,8 @@ UNITY_CODES = {
         23: 't',
         24: 'lb',
         25: 'min',
-        26: '°'
+        26: '°',
+        27: 'm³'
     },
     'pt-br': {
         0:  ' unidade(s)',
@@ -246,7 +251,8 @@ UNITY_CODES = {
         23: 't',
         24: 'lb',
         25: 'min',
-        26: '°'
+        26: '°',
+        27: 'm³'
     }
 }
 
