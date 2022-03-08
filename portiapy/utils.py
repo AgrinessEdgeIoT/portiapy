@@ -102,7 +102,16 @@ THING_CODES = {
     85: 'Sensor_IonTec_Feed_Bin_Meter',
     86: 'Sensor_MSD_IDAL_Twin_v3',
     87: 'Collector_Bin_Sentry_v1',
-    88: 'Sensor_Bin_Sentry'
+    88: 'Sensor_Bin_Sentry_Feed_Bin',
+    89: 'T4_Agriness_v3',
+    90: 'Collector_Maximus_v1',
+    91: 'Sensor_Maximus_T',
+    92: 'Sensor_Maximus_ExtT',
+    93: 'Sensor_Maximus_U',
+    94: 'Sensor_Maximus_H2O',
+    95: 'Sensor_Bin_Sentry_Consumption',
+    96: 'T4_LoRa_Agriness_v1',
+    97: 'Sensor_Agriness_MouseTrap_v1'
 }
 
 DIMENSION_CODES = {
@@ -141,7 +150,8 @@ DIMENSION_CODES = {
         31: 'Point NH3 Concentration',
         32: 'Point Angulation',
         33: 'Accumulated Weight',
-        34: 'Point Volume'
+        34: 'Point Volume',
+        35: 'Signal Noise Ratio'
     },
     'pt-br': {
         0:  'Dimensão Genérica',
@@ -178,7 +188,8 @@ DIMENSION_CODES = {
         31: 'Concentração de NH3 Pontual',
         32: 'Angulação Pontual',
         33: 'Peso Acumulado',
-        34: 'Volume Pontual'
+        34: 'Volume Pontual',
+        35: 'Relação Sinal-Ruído'
     }
 }
 
@@ -222,7 +233,11 @@ UNITY_CODES = {
         24: 'lb',
         25: 'min',
         26: '°',
-        27: 'm³'
+        27: 'm³',
+        28: 'cL',
+        29: 'dL',
+        30: 'L/h',
+        31: 'dB'
     },
     'pt-br': {
         0:  ' unidade(s)',
@@ -252,7 +267,11 @@ UNITY_CODES = {
         24: 'lb',
         25: 'min',
         26: '°',
-        27: 'm³'
+        27: 'm³',
+        28: 'cL',
+        29: 'dL',
+        30: 'L/h',
+        31: 'dB'
     }
 }
 
