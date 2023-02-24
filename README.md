@@ -10,13 +10,13 @@ A Python stub for Agriness Edge's Portia REST API.
 
 ### Prerequisites
 
-* [arrow ^0.12.1](https://arrow.readthedocs.io/en/latest/)
-* [pandas ^0.23.4](https://pandas.pydata.org/)
-* [plotly ^3.1.1](https://plot.ly/)
-* [python-dateutil ^2.7.3](https://dateutil.readthedocs.io/en/stable/)
-* [python-dotenv ^0.15.0](https://pypi.org/project/python-dotenv/)
-* [pytz ^2018.5](http://pytz.sourceforge.net/)
-* [requests ^2.20.0](http://docs.python-requests.org/en/master/)
+* [arrow ^1.2.3](https://arrow.readthedocs.io/en/latest/)
+* [pandas ^1.5.3](https://pandas.pydata.org/)
+* [plotly ^5.13.1](https://plot.ly/)
+* [python-dateutil ^2.8.2](https://dateutil.readthedocs.io/en/stable/)
+* [python-dotenv ^1.0.0](https://pypi.org/project/python-dotenv/)
+* [pytz ^2022.7.1](http://pytz.sourceforge.net/)
+* [requests ^2.28.2](http://docs.python-requests.org/en/master/)
 
 ### Installing
 

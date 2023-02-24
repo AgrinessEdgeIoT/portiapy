@@ -22,9 +22,15 @@ setup(
     author_email='matheus@agrinessedge.com, lucas@agrinessedge.com',
     packages=find_packages(exclude=('binder', 'tests', 'docs')),
     version=open(join(MODULE_NAME, 'VERSION')).read().strip(),
-    install_requires=['requests>=2.20.0', 'pytz>=2018.5',
-                      'python-dateutil>=2.7.3', 'plotly>=3.1.1',
-                      'pandas>=0.23.4', 'arrow>=0.12.1'],
+    install_requires=[
+        'arrow>=1.2.3',
+        'pandas>=1.5.3',
+        'plotly>=5.13.1',
+        'python-dateutil>=2.8.2',
+        'python-dotenv>=1.0.0',
+        'pytz>=2022.7.1',
+        'requests>=2.28.2'
+    ],
     classifiers=(
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
