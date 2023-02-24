@@ -111,7 +111,19 @@ THING_CODES = {
     94: 'Sensor_Maximus_H2O',
     95: 'Sensor_Bin_Sentry_Consumption',
     96: 'T4_LoRa_Agriness_v1',
-    97: 'Sensor_Agriness_MouseTrap_v1'
+    97: 'Sensor_Agriness_MouseTrap_v1',
+    98: 'Collector_Choretime_v1',
+    99: 'Sensor_Choretime_T',
+    100: 'Sensor_Choretime_U',
+    101: 'Sensor_Choretime_CO2',
+    102: 'Sensor_Choretime_NH3',
+    103: 'Sensor_Choretime_PE',
+    104: 'Sensor_Choretime_H2O',
+    105: 'Sensor_Choretime_AnimalScale',
+    106: 'Collector_Agriness_LoRa_v1',
+    107: 'Collector_BigDutchman_Viper_v3',
+    108: 'Collector_Birdoo_v1',
+    109: 'Sensor_Birdoo_AnimalScale'
 }
 
 DIMENSION_CODES = {
@@ -151,7 +163,8 @@ DIMENSION_CODES = {
         32: 'Point Angulation',
         33: 'Accumulated Weight',
         34: 'Point Volume',
-        35: 'Signal Noise Ratio'
+        35: 'Signal Noise Ratio',
+        36: 'Confidence Interval'
     },
     'pt-br': {
         0:  'Dimensão Genérica',
@@ -189,18 +202,47 @@ DIMENSION_CODES = {
         32: 'Angulação Pontual',
         33: 'Peso Acumulado',
         34: 'Volume Pontual',
-        35: 'Relação Sinal-Ruído'
+        35: 'Relação Sinal-Ruído',
+        36: 'Intervalo de Confiança'
     }
 }
 
 EVENT_CODES = {
     'en-us': {
-        0:  'Generic Event',
-        1:  'Communication State'
+        0: 'Generic Event',
+        1: 'Communication State',
+        2: 'Five In One Hour Dimension Variation',
+        3: 'Zero In One Day Dimension Variation',
+        4: 'Internet Connection State',
+        5: 'Vpn Connection State',
+        6: 'Dimension Threshold Exceeded',
+        7: 'Weekly Report',
+        8: 'End Occurrence',
+        9: 'Foresight Zero In One Day Dimension Variation',
+        10: 'Defective Sensor',
+        11: 'Lot Report',
+        12: 'Lot Consumption Profile',
+        13: 'Accumulated Punctual Mismatch',
+        14: 'Tag Mismatch',
+        15: 'Daily Report'
     },
     'pt-br': {
-        0:  'Evento Genérico',
-        1:  'Estado de Comunicação'
+        0: 'Evento Genérico',
+        1: 'Estado de Comunicação',
+        2: 'Cinco Em Uma Hora Variação de Dimensão',
+        3: 'Zero Em Um Dia Variação de Dimensão',
+        4: 'Estado de Conexão de Internet',
+        5: 'Estado de Conexão de Vpn',
+        6: 'Limite Excedido da Dimensão',
+        7: 'Relatório Semanal',
+        8: 'Fim de Ocorrência',
+        9: 'Previsão de Zero Em Um Dia Variação de Dimensão',
+        10: 'Sensor Defeituoso',
+        11: 'Relatório de Lote',
+        12: 'Perfil de Consumo de Lote',
+        13: 'Incompatibilidade de Acumulado Pontual',
+        14: 'Incompatibilidade de Marcação',
+        15: 'Relatorio Diário'
     }
 }
 

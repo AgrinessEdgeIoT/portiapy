@@ -23,7 +23,9 @@ class TestDescribe(unittest.TestCase):
 		"""
 
 		# Settings for test
-		base_url = os.getenv('PORTIA_URL', 'https://api-portia.agriness.io/v3')
+		base_url = os.getenv(
+			'PORTIA_URL', 'https://api-portia.agriness.com/v3'
+		)
 		token = os.getenv('PORTIA_TOKEN')
 
 		# Creating portia configuration
@@ -36,7 +38,7 @@ class TestDescribe(unittest.TestCase):
 
 	def test_device_ports(self):
 		ports = describe.device_ports(self.portia_config, '2DPEQ572HEXP')
-		self.assertListEqual(ports, [0, 1, 2, 4, 5, 8, 9, 10, 11, 12, 13])
+		self.assertListEqual(ports, [0, 1, 2, 4, 5, 6, 8, 9, 10, 11, 12, 13])
 
 	def test_device_ports_last(self):
 		ports = describe.device_ports(
@@ -44,12 +46,12 @@ class TestDescribe(unittest.TestCase):
 		)
 
 		self.assertListEqual(
-			ports['port'].tolist(), [0, 1, 2, 4, 5, 8, 9, 10, 11, 12, 13]
+			ports['port'].tolist(), [0, 1, 2, 4, 5, 6, 8, 9, 10, 11, 12, 13]
 		)
 
 		self.assertListEqual(
 			ports['dimension_thing_code'].tolist(),
-			[69, 15, 15, 16, 16, 22, 22, 22, 23, 68, 68]
+			[69, 15, 15, 16, 16, 16, 22, 22, 22, 23, 68, 68]
 		)
 
 	def test_device_port_sensors(self):
