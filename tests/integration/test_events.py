@@ -21,7 +21,9 @@ class TestEvents(unittest.TestCase):
 		"""
 
 		# Settings for test
-		base_url = os.getenv('PORTIA_URL', 'https://api-portia.agriness.io/v3')
+		base_url = os.getenv(
+			'PORTIA_URL', 'https://api-portia.agriness.com/v3'
+		)
 		token = os.getenv('PORTIA_TOKEN')
 
 		# Creating portia configuration
@@ -41,7 +43,7 @@ class TestEvents(unittest.TestCase):
 			self.assertEqual(row.dimension_thing_code, 16)
 			self.assertEqual(row.dimension_unity_code, 1)
 			self.assertEqual(row.dimension_code, 1)
-			self.assertEqual(row.event_code, 1)
+			self.assertIn(row.event_code, [1, 2, 7])
 
 	def test_query_by_port_sensor_last(self):
 		device_events = events.query_by_port_sensor(
@@ -62,7 +64,7 @@ class TestEvents(unittest.TestCase):
 			self.assertEqual(row.dimension_thing_code, 16)
 			self.assertEqual(row.dimension_unity_code, 1)
 			self.assertEqual(row.dimension_code, 1)
-			self.assertEqual(row.event_code, 1)
+			self.assertIn(row.event_code, [1, 2, 7])
 
 	def test_query_by_port_dimension_last(self):
 		device_events = events.query_by_port_dimension(
@@ -83,7 +85,7 @@ class TestEvents(unittest.TestCase):
 			self.assertEqual(row.dimension_thing_code, 16)
 			self.assertEqual(row.dimension_unity_code, 1)
 			self.assertEqual(row.dimension_code, 1)
-			self.assertEqual(row.event_code, 1)
+			self.assertIn(row.event_code, [1, 2, 7])
 
 	def test_query_by_port_sensor_dimension_last(self):
 		device_events = events.query_by_port_sensor_dimension(

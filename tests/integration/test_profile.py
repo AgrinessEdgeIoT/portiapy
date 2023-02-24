@@ -21,7 +21,9 @@ class TestProfile(unittest.TestCase):
 		"""
 
 		# Settings for test
-		base_url = os.getenv('PORTIA_URL', 'https://api-portia.agriness.io/v3')
+		base_url = os.getenv(
+			'PORTIA_URL', 'https://api-portia.agriness.com/v3'
+		)
 		token = os.getenv('PORTIA_TOKEN')
 
 		# Creating portia configuration
